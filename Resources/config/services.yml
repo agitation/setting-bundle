@@ -1,0 +1,35 @@
+services:
+    agit.setting:
+        class: Agit\SettingBundle\Service\SettingService
+        arguments: [@_agit.setting.loader, @doctrine.orm.entity_manager]
+
+    # listening for settings to be registered
+    agit.setting.register:
+        private: true
+        class: Agit\SettingBundle\Pluggable\SettingListener
+        arguments: [@agit.pluggable.object.processor.factory, @agit.pluggable.fixture.processor.factory]
+        tags: [{ name: kernel.event_listener, event: agit.pluggable, method: onRegistration }]
+
+    # retrieving the registered objects
+    _agit.setting.loader:
+        private: true
+        class: ObjectLoader
+        factory_service:  agit.plugin.object.loader.factory
+        factory_method:   create
+        arguments: [ agit.setting ]
+
+
+    # event listeners for settings plugins
+    agit.setting.plugin.listener.factory:
+        arguments: [@agit.core.classcollector]
+        class: Agit\SettingBundle\Pluggable\SettingPluginListenerFactory
+
+#     # registering our own settings
+    _agit.setting.extensions:
+        private: true
+        class: SettingPluginListener
+        factory_service:  agit.setting.plugin.listener.factory
+        factory_method:   create
+        arguments: [ AgitSettingBundle:Setting ]
+        tags: [{ name: kernel.event_listener, event: agit.setting, method: onRegistration }]
+

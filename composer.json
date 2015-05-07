@@ -1,0 +1,32 @@
+{
+    "name": "agitation/setting",
+    "type": "symfony-bundle",
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.9",
+        "symfony/symfony": "2.3.*",
+        "agitation/intl": "dev-master",
+        "agitation/validation": "dev-master",
+        "agitation/core": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Agit\\SettingBundle\\": ""
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AGITsol GmbH",
+            "homepage": "http://www.agitsol.com/"
+        }
+    ],
+    "description": "Provides an extendable settings service for the Agitation framework.",
+    "keywords": [
+        "agit",
+        "agitation",
+        "tixys",
+        "settings",
+        "pluggable"
+    ]
+}
