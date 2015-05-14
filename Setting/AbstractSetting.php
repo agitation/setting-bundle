@@ -11,12 +11,34 @@ namespace Agit\SettingBundle\Setting;
 
 use Agit\ValidationBundle\Exception\InvalidValueException;
 use Agit\IntlBundle\Service\Translate;
+use Agit\CoreBundle\Pluggable\Strategy\Combined\CombinedPluginInterface;
 
-abstract class AbstractSetting
+abstract class AbstractSetting implements CombinedPluginInterface
 {
     protected $Translate;
 
     private $value;
+
+    // used for creating an instance during plugin registration
+    private static $instance;
+
+    public static function getPluginId()
+    {
+        if (!self::$instance)
+            self::$instance = new static();
+
+        return self::$instance->getId();
+    }
+
+    final public static function getFixtures($entityName)
+    {
+        if (!self::$instance)
+            self::$instance = new static();
+
+        return [
+            ['id' => self::$instance->getId(), 'value' => self::$instance->getDefaultValue()]
+        ];
+    }
 
     public function __construct($value = null)
     {
