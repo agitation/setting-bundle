@@ -14,7 +14,6 @@ use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Setting\AbstractSetting;
 use Agit\CoreBundle\Pluggable\Strategy\Object\ObjectLoader;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class SettingService
 {
@@ -24,22 +23,15 @@ class SettingService
 
     private $SettingList = [];
 
-    public function __construct(ObjectLoader $ObjectLoader, EntityManager $EntityManager, ContainerInterface $Container = null)
+    public function __construct(ObjectLoader $ObjectLoader, EntityManager $EntityManager)
     {
         $this->EntityManager = $EntityManager;
         $this->ObjectLoader = $ObjectLoader;
 
-        $this->ObjectLoader->setObjectFactory(function ($id, $className) use ($Container)
+        $this->ObjectLoader->setObjectFactory(function ($id, $className)
         {
             $SettingEntity = $this->getSettingEntity($id);
             $Setting = new $className($SettingEntity->getValue());
-
-            if ($Container && in_array('Agit\CoreBundle\Pluggable\Strategy\Object\ServiceAwarePlugin', class_uses($Setting)))
-            {
-                foreach ($Setting->getServiceDependencies() as $serviceName)
-                    $Setting->setService($serviceName, $Container->get($serviceName));
-            }
-
             return $Setting;
         });
     }

@@ -1,11 +1,11 @@
 services:
-    agit.setting:
+    agit.settings:
         class: Agit\SettingBundle\Service\SettingService
-        arguments: [@agit.setting.loader, @doctrine.orm.entity_manager]
+        arguments: [@agit.settings.loader, @doctrine.orm.entity_manager]
 
 
     # listening for settings to be registered
-    agit.setting.register:
+    agit.settings.register:
         private: true
         class: CombinedListener
         factory_service:  agit.pluggable.combined.listener.factory
@@ -15,7 +15,7 @@ services:
 
 
     # registering our own settings
-    agit.setting.extensions:
+    agit.settings.extensions:
         private: true
         class: CombinedPluginListener
         factory_service:  agit.plugin.combined.listener.factory
@@ -25,9 +25,39 @@ services:
 
 
     # retrieving registered settings
-    agit.setting.loader:
+    agit.settings.loader:
         private: true
         class: ObjectLoader
         factory_service:  agit.plugin.object.loader.factory
         factory_method:   create
         arguments: [ agit.setting ]
+
+
+    #
+    # OPTIONAL: If the API component is installed, provide an endpoint for loading/saving settings.
+    #
+
+    agit.settings.endpoint.plugins:
+        private: true
+        class: ApiPluginListener
+        factory_service:  agit.api.endpoint.listener.factory
+        factory_method:   create
+        arguments: [ settings.v1, AgitSettingBundle:Api:v1:Endpoint ]
+        tags: [{ name: kernel.event_listener, event: agit.api.endpoint, method: onRegistration }]
+
+    agit.settings.object.plugins:
+        private: true
+        class: ApiPluginListener
+        factory_service:  agit.api.object.listener.factory
+        factory_method:   create
+        arguments: [ settings.v1, AgitSettingBundle:Api:v1:Object ]
+        tags: [{ name: kernel.event_listener, event: agit.api.object, method: onRegistration }]
+
+
+    #
+    # OPTIONAL: If the user component is installed, register capabilities for loading and saving settings.
+    #
+
+    agit.settings.fixture.capabilities.listener:
+        class: Agit\SettingBundle\EventListener\UserCapabilityFixtureData
+        tags: [{ name: kernel.event_listener, event: AgitUserBundle:UserCapability, method: onRegistration }]
