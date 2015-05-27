@@ -19,33 +19,34 @@ abstract class AbstractSetting implements CombinedPluginInterface
 
     private $value;
 
-    // used for creating an instance during plugin registration
-    private static $instance;
+    // used for storing instances during plugin registration
+    private static $instances = [];
+
+    private static function getInstance()
+    {
+        $class = get_called_class();
+
+        if (!isset(self::$instances[$class]))
+            self::$instances[$class] = new static(null);
+
+        return self::$instances[$class];
+    }
 
     public static function getPluginId()
     {
-        if (!self::$instance)
-            self::$instance = new static();
-
-        return self::$instance->getId();
+        return self::getInstance()->getId();
     }
 
     final public static function getFixtures($entityName)
     {
-        if (!self::$instance)
-            self::$instance = new static();
-
         return [
-            ['id' => self::$instance->getId(), 'value' => self::$instance->getDefaultValue()]
+            [ 'id' => self::getInstance()->getId(), 'value' => self::getInstance()->getDefaultValue() ]
         ];
     }
 
-    public function __construct($value = null)
+    public function __construct($value)
     {
-        $this->value = is_null($value)
-            ? $this->getDefaultValue()
-            : $value;
-
+        $this->value = $value;
         $this->Translate = new Translate();
     }
 
