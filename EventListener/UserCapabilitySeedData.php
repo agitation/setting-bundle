@@ -10,12 +10,12 @@
 namespace Agit\SettingBundle\EventListener;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Agit\CoreBundle\Pluggable\Strategy\Fixture\FixtureRegistrationEvent;
+use Agit\CoreBundle\Pluggable\Strategy\Seed\SeedRegistrationEvent;
 use Agit\IntlBundle\Service\Translate;
 
-class UserCapabilityFixtureData
+class UserCapabilitySeedData
 {
-    public function onRegistration(FixtureRegistrationEvent $RegistrationEvent)
+    public function onRegistration(SeedRegistrationEvent $RegistrationEvent)
     {
         $Translate = new Translate();
 

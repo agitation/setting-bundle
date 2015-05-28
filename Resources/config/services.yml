@@ -58,6 +58,6 @@ services:
     # OPTIONAL: If the user component is installed, register capabilities for loading and saving settings.
     #
 
-    agit.settings.fixture.capabilities.listener:
-        class: Agit\SettingBundle\EventListener\UserCapabilityFixtureData
+    agit.settings.seed.capabilities.listener:
+        class: Agit\SettingBundle\EventListener\UserCapabilitySeedData
         tags: [{ name: kernel.event_listener, event: AgitUserBundle:UserCapability, method: onRegistration }]

@@ -37,7 +37,7 @@ abstract class AbstractSetting implements CombinedPluginInterface
         return self::getInstance()->getId();
     }
 
-    final public static function getFixtures($entityName)
+    final public static function getSeeds($entityName)
     {
         return [
             [ 'id' => self::getInstance()->getId(), 'value' => self::getInstance()->getDefaultValue() ]
