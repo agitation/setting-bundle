@@ -30,7 +30,7 @@ services:
         class: ObjectLoader
         factory_service:  agit.plugin.object.loader.factory
         factory_method:   create
-        arguments: [ agit.setting ]
+        arguments: [ agit.setting, true ]
 
 
     #
