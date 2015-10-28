@@ -10,7 +10,9 @@
 namespace Agit\SettingBundle\Service;
 
 use Agit\CoreBundle\Exception\InternalErrorException;
+use Agit\IntlBundle\Service\Translate;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
+use Agit\SettingBundle\Exception\SettingReadonlyException;
 use Agit\SettingBundle\Setting\AbstractSetting;
 use Agit\CoreBundle\Pluggable\Strategy\Object\ObjectLoader;
 use Doctrine\ORM\EntityManager;
@@ -44,7 +46,7 @@ class SettingService
         }
         catch(\Exception $e)
         {
-            throw new SettingNotFoundException("Setting '$id' could not be loaded.");
+            throw new SettingNotFoundException(sprintf(Translate::getInstance()->t("Setting `%s` could not be loaded."), $id));
         }
 
         return $Setting;
@@ -55,7 +57,7 @@ class SettingService
         $Setting = $this->EntityManager->find('AgitSettingBundle:Setting', $id);
 
         if (!$Setting)
-            throw new SettingNotFoundException("Setting '$id' does not exist.");
+            throw new SettingNotFoundException(sprintf(Translate::getInstance()->t("Setting `%s` does not exist."), $id));
 
         return $Setting;
     }
@@ -70,8 +72,11 @@ class SettingService
         return $SettingList;
     }
 
-    public function saveSetting(AbstractSetting $Setting)
+    public function saveSetting(AbstractSetting $Setting, $force = false)
     {
+        if (!$force && $Setting->isReadonly())
+            throw new SettingReadonlyException(sprintf(Translate::getInstance()->t("Setting `%s` is read-only."), $Setting->getId()));
+
         $this->persistSetting($Setting);
         $this->EntityManager->flush();
     }

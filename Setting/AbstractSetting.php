@@ -12,9 +12,12 @@ namespace Agit\SettingBundle\Setting;
 use Agit\ValidationBundle\Exception\InvalidValueException;
 use Agit\IntlBundle\Service\Translate;
 use Agit\CoreBundle\Pluggable\Strategy\Combined\CombinedPluginInterface;
+use Agit\CoreBundle\Pluggable\Strategy\Object\ServiceAwarePlugin;
 
 abstract class AbstractSetting implements CombinedPluginInterface
 {
+    use ServiceAwarePlugin;
+
     protected $Translate;
 
     private $value;
@@ -50,6 +53,11 @@ abstract class AbstractSetting implements CombinedPluginInterface
         $this->Translate = new Translate();
     }
 
+    public function getServiceDependencies()
+    {
+        return ['agit.validation'];
+    }
+
     final public function setValue($value)
     {
         $this->validate($value);
@@ -59,6 +67,16 @@ abstract class AbstractSetting implements CombinedPluginInterface
     final public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Read-only settings cannot be edited through the API (i.e. by a "normal"
+     * admin), but they can and have to be set programmatically by calling
+     * SettingService::saveSetting directly with the $force parameter set to true.
+     */
+    public function isReadonly()
+    {
+        return false;
     }
 
     abstract public function getId();
