@@ -15,25 +15,25 @@ use Agit\IntlBundle\Service\Translate;
 
 class UserCapabilitySeedData
 {
-    public function onRegistration(SeedRegistrationEvent $RegistrationEvent)
+    public function onRegistration(SeedRegistrationEvent $registrationEvent)
     {
-        $Translate = new Translate();
+        $translate = new Translate();
 
         $capabilities = [
-            ['agit.settings.load', $Translate->noopX('Load settings', 'user capability')],
-            ['agit.settings.save', $Translate->noopX('Save settings', 'user capability')]
+            ['agit.settings.load', $translate->noopX('Load settings', 'user capability')],
+            ['agit.settings.save', $translate->noopX('Save settings', 'user capability')]
         ];
 
         foreach ($capabilities as $cap)
         {
-            $RegistrationData = $RegistrationEvent->createContainer();
+            $registrationData = $registrationEvent->createContainer();
 
-            $RegistrationData->setData([
+            $registrationData->setData([
                 'id' => $cap[0],
                 'name' => $cap[1]
             ]);
 
-            $RegistrationEvent->register($RegistrationData);
+            $registrationEvent->register($registrationData);
         }
     }
 }

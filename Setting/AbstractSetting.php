@@ -18,7 +18,7 @@ abstract class AbstractSetting implements CombinedPluginInterface
 {
     use ServiceAwarePlugin;
 
-    protected $Translate;
+    protected $translate;
 
     private $value;
 
@@ -50,7 +50,7 @@ abstract class AbstractSetting implements CombinedPluginInterface
     public function __construct($value)
     {
         $this->value = $value;
-        $this->Translate = new Translate();
+        $this->translate = new Translate();
     }
 
     public function getServiceDependencies()

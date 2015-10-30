@@ -24,11 +24,11 @@ class Settings extends AbstractEndpoint
     protected function load(array $names)
     {
         $result = [];
-        $SettingList = $this->getService('agit.settings')->getSettings($names);
+        $settingList = $this->getService('agit.settings')->getSettings($names);
 
-        foreach ($SettingList as $Setting)
+        foreach ($settingList as $setting)
             $result[] = $this->createObject('Setting', (object)[
-                "id" => $Setting->getId(), "value" => $Setting->getValue()
+                "id" => $setting->getId(), "value" => $setting->getValue()
             ]);
 
         return $result;
@@ -40,19 +40,19 @@ class Settings extends AbstractEndpoint
      *
      * Save application settings.
      */
-    protected function save(array $ApiSettingList)
+    protected function save(array $apiSettingList)
     {
         $settings = [];
 
-        foreach ($ApiSettingList as $ApiSetting)
-            $settings[$ApiSetting->get('id')] = $ApiSetting->get('value');
+        foreach ($apiSettingList as $apiSetting)
+            $settings[$apiSetting->get('id')] = $apiSetting->get('value');
 
-        $SettingList = $this->getService('agit.settings')->getSettings(array_keys($settings));
+        $settingList = $this->getService('agit.settings')->getSettings(array_keys($settings));
 
-        foreach ($SettingList as $Setting)
-            $Setting->setValue($settings[$Setting->getId()]);
+        foreach ($settingList as $setting)
+            $setting->setValue($settings[$setting->getId()]);
 
-        $this->getService('agit.settings')->saveSettings($SettingList);
+        $this->getService('agit.settings')->saveSettings($settingList);
 
         return $this->load(array_keys($settings));
     }

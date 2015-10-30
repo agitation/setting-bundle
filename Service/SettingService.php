@@ -19,22 +19,22 @@ use Doctrine\ORM\EntityManager;
 
 class SettingService
 {
-    private $ObjectLoader;
+    private $objectLoader;
 
-    private $EntityManager;
+    private $entityManager;
 
-    private $SettingList = [];
+    private $settingList = [];
 
-    public function __construct(ObjectLoader $ObjectLoader, EntityManager $EntityManager)
+    public function __construct(ObjectLoader $objectLoader, EntityManager $entityManager)
     {
-        $this->EntityManager = $EntityManager;
-        $this->ObjectLoader = $ObjectLoader;
+        $this->entityManager = $entityManager;
+        $this->objectLoader = $objectLoader;
 
-        $this->ObjectLoader->setObjectFactory(function ($id, $className)
+        $this->objectLoader->setObjectFactory(function ($id, $className)
         {
-            $SettingEntity = $this->getSettingEntity($id);
-            $Setting = new $className($SettingEntity->getValue());
-            return $Setting;
+            $settingEntity = $this->getSettingEntity($id);
+            $setting = new $className($settingEntity->getValue());
+            return $setting;
         });
     }
 
@@ -42,68 +42,68 @@ class SettingService
     {
         try
         {
-            $Setting = $this->ObjectLoader->getObject($id);
+            $setting = $this->objectLoader->getObject($id);
         }
         catch(\Exception $e)
         {
             throw new SettingNotFoundException(sprintf(Translate::getInstance()->t("Setting `%s` could not be loaded."), $id));
         }
 
-        return $Setting;
+        return $setting;
     }
 
     private function getSettingEntity($id)
     {
-        $Setting = $this->EntityManager->find('AgitSettingBundle:Setting', $id);
+        $setting = $this->entityManager->find('AgitSettingBundle:Setting', $id);
 
-        if (!$Setting)
+        if (!$setting)
             throw new SettingNotFoundException(sprintf(Translate::getInstance()->t("Setting `%s` does not exist."), $id));
 
-        return $Setting;
+        return $setting;
     }
 
     public function getSettings(array $idList)
     {
-        $SettingList = [];
+        $settingList = [];
 
         foreach ($idList as $id)
-            $SettingList[] = $this->getSetting($id);
+            $settingList[] = $this->getSetting($id);
 
-        return $SettingList;
+        return $settingList;
     }
 
-    public function saveSetting(AbstractSetting $Setting, $force = false)
+    public function saveSetting(AbstractSetting $setting, $force = false)
     {
-        if (!$force && $Setting->isReadonly())
-            throw new SettingReadonlyException(sprintf(Translate::getInstance()->t("Setting `%s` is read-only."), $Setting->getId()));
+        if (!$force && $setting->isReadonly())
+            throw new SettingReadonlyException(sprintf(Translate::getInstance()->t("Setting `%s` is read-only."), $setting->getId()));
 
-        $this->persistSetting($Setting);
-        $this->EntityManager->flush();
+        $this->persistSetting($setting);
+        $this->entityManager->flush();
     }
 
-    public function saveSettings(array $SettingList)
+    public function saveSettings(array $settingList)
     {
         try
         {
-            $this->EntityManager->getConnection()->beginTransaction();
+            $this->entityManager->getConnection()->beginTransaction();
 
-            foreach ($SettingList as $Setting)
-                $this->persistSetting($Setting);
+            foreach ($settingList as $setting)
+                $this->persistSetting($setting);
 
-            $this->EntityManager->flush();
-            $this->EntityManager->getConnection()->commit();
+            $this->entityManager->flush();
+            $this->entityManager->getConnection()->commit();
         }
         catch(\Exception $e)
         {
-            $this->EntityManager->getConnection()->rollback();
+            $this->entityManager->getConnection()->rollback();
             throw $e;
         }
     }
 
-    private function persistSetting($Setting)
+    private function persistSetting($setting)
     {
-        $SettingEntity = $this->getSettingEntity($Setting->getId());
-        $SettingEntity->setValue($Setting->getValue());
-        $this->EntityManager->persist($SettingEntity);
+        $settingEntity = $this->getSettingEntity($setting->getId());
+        $settingEntity->setValue($setting->getValue());
+        $this->entityManager->persist($settingEntity);
     }
 }
