@@ -9,13 +9,13 @@
 
 namespace Agit\SettingBundle\Service;
 
+use Doctrine\ORM\EntityManager;
 use Agit\CoreBundle\Exception\InternalErrorException;
-use Agit\IntlBundle\Service\Translate;
+use Agit\IntlBundle\Translate;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
-use Agit\SettingBundle\Setting\AbstractSetting;
-use Agit\CoreBundle\Pluggable\Strategy\Object\ObjectLoader;
-use Doctrine\ORM\EntityManager;
+use Agit\SettingBundle\Plugin\AbstractSetting;
+use Agit\PluggableBundle\Strategy\Entity\EntityLoaderFactory;
 
 class SettingService
 {
@@ -25,17 +25,14 @@ class SettingService
 
     private $settingList = [];
 
-    public function __construct(ObjectLoader $objectLoader, EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
-        $this->objectLoader = $objectLoader;
+    private $registrationTag = "agit.setting";
 
-        $this->objectLoader->setObjectFactory(function ($id, $className)
-        {
-            $settingEntity = $this->getSettingEntity($id);
-            $setting = new $className($settingEntity->getValue());
-            return $setting;
-        });
+    private $entityName = "AgitSettingBundle:Setting";
+
+    public function __construct(EntityLoaderFactory $entityLoaderFactory, EntityManager $entityManager)
+    {
+        $this->objectLoader = $entityLoaderFactory->create($this->registrationTag, $this->entityName);
+        $this->entityManager = $entityManager;
     }
 
     public function getSetting($id)
@@ -43,23 +40,12 @@ class SettingService
         try
         {
             $setting = $this->objectLoader->getObject($id);
+            return $setting;
         }
         catch(\Exception $e)
         {
-            throw new SettingNotFoundException(sprintf(Translate::getInstance()->t("Setting `%s` could not be loaded."), $id));
+            throw new SettingNotFoundException(sprintf(Translate::t("Setting `%s` does not exist."), $id));
         }
-
-        return $setting;
-    }
-
-    private function getSettingEntity($id)
-    {
-        $setting = $this->entityManager->find('AgitSettingBundle:Setting', $id);
-
-        if (!$setting)
-            throw new SettingNotFoundException(sprintf(Translate::getInstance()->t("Setting `%s` does not exist."), $id));
-
-        return $setting;
     }
 
     public function getSettings(array $idList)
@@ -74,9 +60,6 @@ class SettingService
 
     public function saveSetting(AbstractSetting $setting, $force = false)
     {
-        if (!$force && $setting->isReadonly())
-            throw new SettingReadonlyException(sprintf(Translate::getInstance()->t("Setting `%s` is read-only."), $setting->getId()));
-
         $this->persistSetting($setting);
         $this->entityManager->flush();
     }
@@ -100,10 +83,23 @@ class SettingService
         }
     }
 
-    private function persistSetting($setting)
+    private function persistSetting($setting, $force = false)
     {
-        $settingEntity = $this->getSettingEntity($setting->getId());
-        $settingEntity->setValue($setting->getValue());
-        $this->entityManager->persist($settingEntity);
+        if (!$force && $setting->isReadonly())
+            throw new SettingReadonlyException(sprintf(Translate::t("Setting `%s` is read-only."), $setting->getId()));
+
+        $entity = $this->getSettingEntity($setting->getId());
+        $entity->setValue($setting->getValue());
+        $this->entityManager->persist($entity);
+    }
+
+    private function getSettingEntity($id)
+    {
+        $entity = $this->entityManager->find($this->entityName, $id);
+
+        if (!$entity)
+            throw new SettingNotFoundException(sprintf(Translate::t("Setting `%s` does not exist."), $id));
+
+        return $entity;
     }
 }
