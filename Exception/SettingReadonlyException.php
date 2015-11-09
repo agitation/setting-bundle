@@ -9,6 +9,6 @@
 
 namespace Agit\SettingBundle\Exception;
 
-use Agit\CoreBundle\Exception\AgitException;
+use Agit\CommonBundle\Exception\AgitException;
 
 class SettingReadonlyException extends AgitException { }

@@ -10,7 +10,7 @@
 namespace Agit\SettingBundle\Service;
 
 use Doctrine\ORM\EntityManager;
-use Agit\CoreBundle\Exception\InternalErrorException;
+use Agit\CommonBundle\Exception\InternalErrorException;
 use Agit\IntlBundle\Translate;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
