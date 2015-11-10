@@ -11,15 +11,15 @@ namespace Agit\SettingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
-use Agit\CommonBundle\Entity\AbstractEntity;
-use Agit\CommonBundle\Exception\InternalErrorException;
+use Agit\CommonBundle\Entity\IdentityAwareTrait;
 
 /**
  * @ORM\Entity
  */
-class Setting extends AbstractEntity
+class Setting
 {
+    use IdentityAwareTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="string",length=30)
@@ -30,28 +30,6 @@ class Setting extends AbstractEntity
      * @ORM\Column(type="object")
      */
     private $value;
-
-    /**
-     * Get id
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set id
-     *
-     * @param string $id
-     * @return Setting
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
 
     /**
      * Set value
