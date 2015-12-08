@@ -20,7 +20,7 @@ class Settings extends AbstractEndpointClass
 {
     /**
      * @Endpoint\Endpoint(request="common.v1/String[]",response="Setting[]")
-     * @Endpoint\Security(capability="agit.settings.load")
+     * @Endpoint\Security(capability="agit.settings.read")
      * @Depends({"agit.settings"})
      *
      * Load application settings by setting names.
@@ -40,7 +40,7 @@ class Settings extends AbstractEndpointClass
 
     /**
      * @Endpoint\Endpoint(request="Setting[]",response="Setting[]")
-     * @Endpoint\Security(capability="agit.settings.save")
+     * @Endpoint\Security(capability="agit.settings.write")
      * @Depends({"agit.settings"})
      *
      * Save application settings.
