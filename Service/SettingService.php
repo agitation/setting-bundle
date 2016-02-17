@@ -35,6 +35,11 @@ class SettingService
         $this->entityManager = $entityManager;
     }
 
+    public function getValueOf($id)
+    {
+        return $this->getSetting($id)->getValue();
+    }
+
     public function getSetting($id)
     {
         try
