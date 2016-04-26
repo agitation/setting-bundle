@@ -10,13 +10,13 @@
 namespace Agit\SettingBundle\Plugin\Api\SettingV1\Endpoint;
 
 use Agit\ApiBundle\Annotation\Endpoint;
-use Agit\ApiBundle\Common\AbstractEndpointClass;
+use Agit\ApiBundle\Common\AbstractController;
 use Agit\PluggableBundle\Strategy\Depends;
 
 /**
- * @Endpoint\EndpointClass
+ * @Endpoint\Controller
  */
-class Settings extends AbstractEndpointClass
+class Settings extends AbstractController
 {
     /**
      * @Endpoint\Endpoint(request="common.v1/String[]",response="Setting[]")
