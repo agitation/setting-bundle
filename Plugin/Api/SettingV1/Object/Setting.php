@@ -11,14 +11,14 @@ namespace Agit\SettingBundle\Plugin\Api\SettingV1\Object;
 
 use Agit\ApiBundle\Annotation\Object;
 use Agit\ApiBundle\Annotation\Property;
-use Agit\ApiBundle\Common\AbstractObject;
+use Agit\ApiBundle\Common\AbstractEntityObject;
 
 /**
  * @Object\Object
  *
  * An application setting.
  */
-class Setting extends AbstractObject
+class Setting extends AbstractEntityObject
 {
     /**
      * @Property\StringType(minLength=3, maxLength=40)
