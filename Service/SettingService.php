@@ -40,6 +40,15 @@ class SettingService
         return $this->getSetting($id)->getValue();
     }
 
+    public function getValuesOf(array $idList)
+    {
+        $settings = $this->getSettings($idList);
+
+        return array_map(function($setting){
+            return $setting->getValue();
+        }, $settings);
+    }
+
     public function getSetting($id)
     {
         try
@@ -58,25 +67,25 @@ class SettingService
         $settingList = [];
 
         foreach ($idList as $id)
-            $settingList[] = $this->getSetting($id);
+            $settingList[$id] = $this->getSetting($id);
 
         return $settingList;
     }
 
     public function saveSetting(AbstractSetting $setting, $force = false)
     {
-        $this->persistSetting($setting);
+        $this->persistSetting($setting, $force);
         $this->entityManager->flush();
     }
 
-    public function saveSettings(array $settingList)
+    public function saveSettings(array $settingList, $force = false)
     {
         try
         {
             $this->entityManager->getConnection()->beginTransaction();
 
             foreach ($settingList as $setting)
-                $this->persistSetting($setting);
+                $this->persistSetting($setting, $force);
 
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
