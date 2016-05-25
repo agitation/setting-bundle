@@ -1,4 +1,4 @@
-agit.api.Endpoint.register({
+ag.api.Endpoint.register({
     "setting.v1/Settings.load": [
         "common.v1/String[]",
         "setting.v1/Setting[]"
@@ -8,7 +8,7 @@ agit.api.Endpoint.register({
         "setting.v1/Setting[]"
     ]
 });
-agit.api.Object.register({
+ag.api.Object.register({
     "setting.v1/Setting": {
         "id": {
             "type": "string",
