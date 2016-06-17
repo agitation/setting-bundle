@@ -11,4 +11,10 @@ namespace Agit\SettingBundle\Exception;
 
 use Agit\CommonBundle\Exception\AgitException;
 
-class SettingReadonlyException extends AgitException { }
+/**
+ * Tried to modify a setting which is read-only.
+ */
+class SettingReadonlyException extends AgitException
+{
+    protected $httpStatus = 400;
+}

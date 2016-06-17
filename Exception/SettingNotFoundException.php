@@ -11,4 +11,10 @@ namespace Agit\SettingBundle\Exception;
 
 use Agit\CommonBundle\Exception\AgitException;
 
-class SettingNotFoundException extends AgitException { }
+/**
+ * Tried to modify a non-existent setting.
+ */
+class SettingNotFoundException extends AgitException
+{
+    protected $httpStatus = 404;
+}
