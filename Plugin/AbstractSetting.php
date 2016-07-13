@@ -15,7 +15,7 @@ use Agit\PluggableBundle\Strategy\ServiceAwarePluginTrait;
 use Agit\PluggableBundle\Strategy\Depends;
 
 /**
- * @Depends({"agit.validation"})
+ * @Depends({"@agit.validation"})
  */
 abstract class AbstractSetting implements EntityPluginInterface, ServiceAwarePluginInterface
 {
