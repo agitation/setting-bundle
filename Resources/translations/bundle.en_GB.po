@@ -4,3 +4,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "nplurals=2; plural=(n != 1);\n"
+
+#: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:27
+msgctxt "user capability"
+msgid "Load settings"
+msgstr ""
+
+#: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:28
+msgctxt "user capability"
+msgid "Save settings"
+msgstr ""
+
+#: @AgitSettingBundle/Service/SettingService.php:61
+#: @AgitSettingBundle/Service/SettingService.php:115
+#, php-format
+msgid "Setting `%s` does not exist."
+msgstr ""
+
+#: @AgitSettingBundle/Service/SettingService.php:103
+#, php-format
+msgid "Setting `%s` is read-only."
+msgstr ""

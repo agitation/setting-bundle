@@ -7,105 +7,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "nplurals=2; plural=n == 1 ? 0 : 1;\n"
 
-#~ msgid "The website is malformed."
-#~ msgstr "Die Webadresse ist ungültig."
+#: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:27
+msgctxt "user capability"
+msgid "Load settings"
+msgstr ""
 
-#~ msgid "The website is invalid."
-#~ msgstr "Die Website ist ungültig."
+#: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:28
+msgctxt "user capability"
+msgid "Save settings"
+msgstr ""
 
-#~ msgid "The value contains invalid characters."
-#~ msgstr "Der Wert enthält ungültige Zeichen."
+#: @AgitSettingBundle/Service/SettingService.php:61
+#: @AgitSettingBundle/Service/SettingService.php:115
+#, php-format
+msgid "Setting `%s` does not exist."
+msgstr ""
 
-#~ msgid "The value is too long, it must have at most %s characters."
-#~ msgstr "Der Wert ist zu lang, er darf höchstens %s Zeichen lang sein."
-
-#~ msgid "The value is too short, it must have at least %s characters."
-#~ msgstr "Der Wert ist zu kurz, er muss mindestens %s Zeichen lang sein."
-
-#~ msgid "The value must be a string."
-#~ msgstr "Der Wert muss eine Zeichenkette sein."
-
-#~ msgid "The value must be scalar."
-#~ msgstr "Der Wert muss skalar sein."
-
-#~ msgid "The value doesn't match the required pattern."
-#~ msgstr "Der Wert entspricht nicht dem geforderten Format."
-
-#~ msgid "Both passwords must be identical."
-#~ msgstr "Beide Passwörter müssen identisch sein."
-
-#~ msgid "The password must only consist of letters, numbers and the characters %s."
-#~ msgstr "Das Passwort darf nur aus Ziffern, Buchstaben und den Zeichen %s bestehen."
-
-#~ msgid "The password must contain at least one letter and one number."
-#~ msgstr "Das Passwort muss mindestens eine Ziffer und mindestens einen Buchstaben enthalten."
-
-#~ msgid "The password must have at least %d characters."
-#~ msgstr "Das Passwort muss mindestens %d Zeichen lang sein."
-
-#~ msgid "The object is missing the mandatory “%s” property."
-#~ msgstr "Dem Objekt fehlt die vorgeschriebene Eigenschaft „%s“."
-
-#~ msgid "The object has an invalid set of properties."
-#~ msgstr "Das Objekt hat ungültige Eigenschaften."
-
-#~ msgid "The value must be an object."
-#~ msgstr "Der Wert muss ein Objekt sein."
-
-#~ msgid "The value must be a positive integer number."
-#~ msgstr "Der Wert muss eine positive Ganzzahl sein."
-
-#~ msgid "The value must be numeric."
-#~ msgstr "Der Wert muss numerisch sein."
-
-#~ msgid "The value must be NULL."
-#~ msgstr "Der Wert muss NULL sein."
-
-#~ msgid "The value must not be NULL."
-#~ msgstr "Der Wert darf nicht NULL sein."
-
-#~ msgctxt "quotation inside collection"
-#~ msgid "”, “"
-#~ msgstr "“, „"
-
-#~ msgid "The value must be one of the following: “%s”."
-#~ msgstr "Der Wert muss einer der folgenden sein: „%s“"
-
-#~ msgid "The longitude is invalid."
-#~ msgstr "Der Längengrad ist ungültig."
-
-#~ msgid "The latitude is invalid."
-#~ msgstr "Der Breitengrad ist ungültig."
-
-#~ msgid "The value must be an integer."
-#~ msgstr "Der Wert muss eine Ganzzahl sein."
-
-#~ msgid "The geographical location is invalid: %s"
-#~ msgstr "Die Geoposition ist ungültig: %s"
-
-#~ msgid "The value is too high, it must be lower than %s."
-#~ msgstr "Der Wert ist zu hoch, er darf höchstens %s betragen."
-
-#~ msgid "The value is too low, it must be higher than %s."
-#~ msgstr "Der Wert ist zu niedrig, er muss mindestens %s betragen."
-
-#~ msgid "The value must be a number."
-#~ msgstr "Der Wert muss eine Zahl sein."
-
-#~ msgid "The e-mail address must not contain capital letters."
-#~ msgstr "Die E-Mail-Adresse darf keine Großbuchstaben enthalten."
-
-#~ msgid "The e-mail address is malformed."
-#~ msgstr "Die E-Mail-Adresse ist ungültig."
-
-#~ msgid "The value must be a boolean."
-#~ msgstr "Der Wert muss ein Boolscher Wert sein."
-
-#~ msgid "The list is too long, it must have at most %s elements."
-#~ msgstr "Die Liste ist zu lang, sie darf höchstens %s Elemente haben."
-
-#~ msgid "The list is too short, it must have at least %s elements."
-#~ msgstr "Die Liste ist zu kurz, sie muss mindestens %s Elemente haben."
-
-#~ msgid "The value must be an array."
-#~ msgstr "Der Wert muss eine Liste sein."
+#: @AgitSettingBundle/Service/SettingService.php:103
+#, php-format
+msgid "Setting `%s` is read-only."
+msgstr ""
