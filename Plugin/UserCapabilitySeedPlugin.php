@@ -24,8 +24,8 @@ class UserCapabilitySeedPlugin implements SeedPluginInterface
     public function load()
     {
         $capabilities = [
-            ['id' => 'agit.settings.load', 'name' => Translate::noopX('Load settings', 'user capability')],
-            ['id' => 'agit.settings.save', 'name' => Translate::noopX('Save settings', 'user capability')]
+            ["id" => "agit.settings.load", "name" => Translate::noopX("user capability", "Load settings")],
+            ["id" => "agit.settings.save", "name" => Translate::noopX("user capability", "Save settings")]
         ];
 
         foreach ($capabilities as $capability)
