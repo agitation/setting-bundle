@@ -9,7 +9,7 @@
 
 namespace Agit\SettingBundle\Exception;
 
-use Agit\CommonBundle\Exception\AgitException;
+use Agit\BaseBundle\Exception\AgitException;
 
 /**
  * Tried to modify a setting which is read-only.
