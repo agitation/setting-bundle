@@ -11,7 +11,7 @@ namespace Agit\SettingBundle\Service;
 
 use Doctrine\ORM\EntityManager;
 use Agit\BaseBundle\Exception\InternalErrorException;
-use Agit\IntlBundle\Translate;
+use Agit\BaseBundle\Tool\Translate;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
 use Agit\SettingBundle\Plugin\AbstractSetting;

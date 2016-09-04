@@ -12,7 +12,7 @@ namespace Agit\SettingBundle\Plugin;
 use Agit\PluggableBundle\Strategy\Seed\SeedPluginInterface;
 use Agit\PluggableBundle\Strategy\Seed\SeedPlugin;
 use Agit\PluggableBundle\Strategy\Seed\SeedEntry;
-use Agit\IntlBundle\Translate;
+use Agit\BaseBundle\Tool\Translate;
 
 /**
  * @SeedPlugin(entity="AgitUserBundle:UserCapability")
