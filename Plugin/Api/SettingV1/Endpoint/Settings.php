@@ -11,7 +11,7 @@ namespace Agit\SettingBundle\Plugin\Api\SettingV1\Endpoint;
 
 use Agit\ApiBundle\Annotation\Endpoint;
 use Agit\ApiBundle\Common\AbstractController;
-use Agit\PluggableBundle\Strategy\Depends;
+use Agit\BaseBundle\Pluggable\Depends;
 
 /**
  * @Endpoint\Controller

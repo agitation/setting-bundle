@@ -15,7 +15,7 @@ use Agit\BaseBundle\Tool\Translate;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
 use Agit\SettingBundle\Plugin\AbstractSetting;
-use Agit\PluggableBundle\Strategy\Entity\EntityLoaderFactory;
+use Agit\BaseBundle\Pluggable\Entity\EntityLoaderFactory;
 
 class SettingService
 {

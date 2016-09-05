@@ -9,10 +9,10 @@
 
 namespace Agit\SettingBundle\Plugin;
 
-use Agit\PluggableBundle\Strategy\Entity\EntityPluginInterface;
-use Agit\PluggableBundle\Strategy\ServiceAwarePluginInterface;
-use Agit\PluggableBundle\Strategy\ServiceAwarePluginTrait;
-use Agit\PluggableBundle\Strategy\Depends;
+use Agit\BaseBundle\Pluggable\Entity\EntityPluginInterface;
+use Agit\BaseBundle\Pluggable\ServiceAwarePluginInterface;
+use Agit\BaseBundle\Pluggable\ServiceAwarePluginTrait;
+use Agit\BaseBundle\Pluggable\Depends;
 
 /**
  * @Depends({"@agit.validation"})
