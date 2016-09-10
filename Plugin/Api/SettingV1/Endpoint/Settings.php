@@ -1,9 +1,9 @@
 <?php
-/**
- * @package    agitation/settings
- * @link       http://github.com/agitation/AgitSettingsBundle
- * @author     Alex Günsche <http://www.agitsol.com/>
- * @copyright  2012-2015 AGITsol GmbH
+
+/*
+ * @package    agitation/setting-bundle
+ * @link       http://github.com/agitation/setting-bundle
+ * @author     Alexander Günsche
  * @license    http://opensource.org/licenses/MIT
  */
 
@@ -30,10 +30,11 @@ class Settings extends AbstractController
         $result = [];
         $settingList = $this->getService("agit.settings")->getSettings($names);
 
-        foreach ($settingList as $setting)
-            $result[] = $this->createObject("Setting", (object)[
+        foreach ($settingList as $setting) {
+            $result[] = $this->createObject("Setting", (object) [
                 "id" => $setting->getId(), "value" => $setting->getValue()
             ]);
+        }
 
         return $result;
     }
@@ -49,13 +50,15 @@ class Settings extends AbstractController
     {
         $settings = [];
 
-        foreach ($apiSettingList as $apiSetting)
+        foreach ($apiSettingList as $apiSetting) {
             $settings[$apiSetting->get("id")] = $apiSetting->get("value");
+        }
 
         $settingList = $this->getService("agit.settings")->getSettings(array_keys($settings));
 
-        foreach ($settingList as $setting)
+        foreach ($settingList as $setting) {
             $setting->setValue($settings[$setting->getId()]);
+        }
 
         $this->getService("agit.settings")->saveSettings($settingList);
 

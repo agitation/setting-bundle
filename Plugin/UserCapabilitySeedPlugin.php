@@ -1,17 +1,17 @@
 <?php
-/**
- * @package    agitation/setting
- * @link       http://github.com/agitation/AgitSettingBundle
- * @author     Alex Günsche <http://www.agitsol.com/>
- * @copyright  2012-2015 AGITsol GmbH
+
+/*
+ * @package    agitation/setting-bundle
+ * @link       http://github.com/agitation/setting-bundle
+ * @author     Alexander Günsche
  * @license    http://opensource.org/licenses/MIT
  */
 
 namespace Agit\SettingBundle\Plugin;
 
-use Agit\BaseBundle\Pluggable\Seed\SeedPluginInterface;
-use Agit\BaseBundle\Pluggable\Seed\SeedPlugin;
 use Agit\BaseBundle\Pluggable\Seed\SeedEntry;
+use Agit\BaseBundle\Pluggable\Seed\SeedPlugin;
+use Agit\BaseBundle\Pluggable\Seed\SeedPluginInterface;
 use Agit\IntlBundle\Tool\Translate;
 
 /**
@@ -28,8 +28,7 @@ class UserCapabilitySeedPlugin implements SeedPluginInterface
             ["id" => "agit.settings.save", "name" => Translate::noopX("user capability", "Save settings")]
         ];
 
-        foreach ($capabilities as $capability)
-        {
+        foreach ($capabilities as $capability) {
             $seedEntry = new SeedEntry();
             $seedEntry->setDoUpdate(true);
             $seedEntry->setData($capability);

@@ -1,21 +1,20 @@
 <?php
-/**
- * @package    agitation/settings
- * @link       http://github.com/agitation/AgitSettingsBundle
- * @author     Alex Günsche <http://www.agitsol.com/>
- * @copyright  2012-2015 AGITsol GmbH
+
+/*
+ * @package    agitation/setting-bundle
+ * @link       http://github.com/agitation/setting-bundle
+ * @author     Alexander Günsche
  * @license    http://opensource.org/licenses/MIT
  */
 
 namespace Agit\SettingBundle\Service;
 
-use Doctrine\ORM\EntityManager;
-use Agit\BaseBundle\Exception\InternalErrorException;
+use Agit\BaseBundle\Pluggable\Entity\EntityLoaderFactory;
 use Agit\IntlBundle\Tool\Translate;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
 use Agit\SettingBundle\Plugin\AbstractSetting;
-use Agit\BaseBundle\Pluggable\Entity\EntityLoaderFactory;
+use Doctrine\ORM\EntityManager;
 
 class SettingService
 {
@@ -44,20 +43,18 @@ class SettingService
     {
         $settings = $this->getSettings($idList);
 
-        return array_map(function($setting){
+        return array_map(function ($setting) {
             return $setting->getValue();
         }, $settings);
     }
 
     public function getSetting($id)
     {
-        try
-        {
+        try {
             $setting = $this->objectLoader->getObject($id);
+
             return $setting;
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             throw new SettingNotFoundException(sprintf(Translate::t("Setting `%s` does not exist."), $id));
         }
     }
@@ -66,8 +63,9 @@ class SettingService
     {
         $settingList = [];
 
-        foreach ($idList as $id)
+        foreach ($idList as $id) {
             $settingList[$id] = $this->getSetting($id);
+        }
 
         return $settingList;
     }
@@ -80,18 +78,16 @@ class SettingService
 
     public function saveSettings(array $settingList, $force = false)
     {
-        try
-        {
+        try {
             $this->entityManager->getConnection()->beginTransaction();
 
-            foreach ($settingList as $setting)
+            foreach ($settingList as $setting) {
                 $this->persistSetting($setting, $force);
+            }
 
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             $this->entityManager->getConnection()->rollback();
             throw $e;
         }
@@ -99,8 +95,9 @@ class SettingService
 
     private function persistSetting($setting, $force = false)
     {
-        if (!$force && $setting->isReadonly())
+        if (! $force && $setting->isReadonly()) {
             throw new SettingReadonlyException(sprintf(Translate::t("Setting `%s` is read-only."), $setting->getId()));
+        }
 
         $entity = $this->getSettingEntity($setting->getId());
         $entity->setValue($setting->getValue());
@@ -111,8 +108,9 @@ class SettingService
     {
         $entity = $this->entityManager->find($this->entityName, $id);
 
-        if (!$entity)
+        if (! $entity) {
             throw new SettingNotFoundException(sprintf(Translate::t("Setting `%s` does not exist."), $id));
+        }
 
         return $entity;
     }

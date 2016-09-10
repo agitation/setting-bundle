@@ -1,9 +1,9 @@
 <?php
-/**
- * @package    agitation/setting
- * @link       http://github.com/agitation/AgitSettingBundle
- * @author     Alex Günsche <http://www.agitsol.com/>
- * @copyright  2012-2015 AGITsol GmbH
+
+/*
+ * @package    agitation/setting-bundle
+ * @link       http://github.com/agitation/setting-bundle
+ * @author     Alexander Günsche
  * @license    http://opensource.org/licenses/MIT
  */
 

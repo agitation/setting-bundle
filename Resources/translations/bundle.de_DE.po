@@ -5,14 +5,14 @@ msgstr ""
 
 #: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:27
 #: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:27
-msgctxt "Load settings"
-msgid "user capability"
+msgctxt "user capability"
+msgid "Load settings"
 msgstr ""
 
 #: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:28
 #: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:28
-msgctxt "Save settings"
-msgid "user capability"
+msgctxt "user capability"
+msgid "Save settings"
 msgstr ""
 
 #: @AgitSettingBundle/Service/SettingService.php:61

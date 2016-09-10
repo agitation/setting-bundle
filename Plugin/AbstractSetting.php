@@ -1,18 +1,18 @@
 <?php
-/**
- * @package    agitation/settings
- * @link       http://github.com/agitation/AgitSettingsBundle
- * @author     Alex Günsche <http://www.agitsol.com/>
- * @copyright  2012-2015 AGITsol GmbH
+
+/*
+ * @package    agitation/setting-bundle
+ * @link       http://github.com/agitation/setting-bundle
+ * @author     Alexander Günsche
  * @license    http://opensource.org/licenses/MIT
  */
 
 namespace Agit\SettingBundle\Plugin;
 
+use Agit\BaseBundle\Pluggable\Depends;
 use Agit\BaseBundle\Pluggable\Entity\EntityPluginInterface;
 use Agit\BaseBundle\Pluggable\ServiceAwarePluginInterface;
 use Agit\BaseBundle\Pluggable\ServiceAwarePluginTrait;
-use Agit\BaseBundle\Pluggable\Depends;
 
 /**
  * @Depends({"@agit.validation"})
@@ -29,7 +29,7 @@ abstract class AbstractSetting implements EntityPluginInterface, ServiceAwarePlu
     {
         $this->seeds["AgitSettingBundle:Setting"] =
         [
-            [ 'id' => $this->getId(), 'value' => $this->getDefaultValue() ]
+            ['id' => $this->getId(), 'value' => $this->getDefaultValue()]
         ];
     }
 
