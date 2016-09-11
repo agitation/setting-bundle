@@ -8,3 +8,8 @@ services:
         private: true
         class: Agit\SettingBundle\Service\UserCapabilitySeed
         tags: [{ name: kernel.event_listener, event: agit.seed, method: registerSeed }]
+
+    agit.setting.twig:
+        class: Agit\SettingBundle\Service\SettingsExtension
+        arguments:  [ "@agit.setting" ]
+        tags: [{ name: twig.extension }]
