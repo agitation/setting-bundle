@@ -9,34 +9,44 @@
 
 namespace Agit\SettingBundle\Service;
 
-use Agit\BaseBundle\Pluggable\Entity\EntityLoaderFactory;
+use Exception;
 use Agit\IntlBundle\Tool\Translate;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
-use Agit\SettingBundle\Plugin\AbstractSetting;
 use Doctrine\ORM\EntityManager;
+use Agit\SeedBundle\Event\SeedEvent;
 
 class SettingService
 {
-    private $objectLoader;
+    const ENTITY_NAME = "AgitSettingBundle:Setting";
 
     private $entityManager;
 
-    private $settingList = [];
+    private $settings = [];
 
-    private $registrationTag = "agit.setting";
-
-    private $entityName = "AgitSettingBundle:Setting";
-
-    public function __construct(EntityLoaderFactory $entityLoaderFactory, EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager)
     {
-        $this->objectLoader = $entityLoaderFactory->create($this->registrationTag, $this->entityName);
         $this->entityManager = $entityManager;
+    }
+
+    public function addSetting(AbstractSetting $setting)
+    {
+        $this->settings[$setting->getId()] = $setting;
+    }
+
+    public function registerSeed(SeedEvent $event)
+    {
+        foreach ($this->settings as $setting) {
+            $event->addSeedEntry(self::ENTITY_NAME, [
+                "id"   => $setting->getId(),
+                "value" => $setting->getDefaultValue()
+            ]);
+        }
     }
 
     public function getValueOf($id)
     {
-        return $this->getSetting($id)->getValue();
+        return $this->settings[$id]->getValue();
     }
 
     public function getValuesOf(array $idList)
@@ -48,70 +58,57 @@ class SettingService
         }, $settings);
     }
 
-    public function getSetting($id)
-    {
-        try {
-            $setting = $this->objectLoader->getObject($id);
-
-            return $setting;
-        } catch (\Exception $e) {
-            throw new SettingNotFoundException(sprintf(Translate::t("Setting `%s` does not exist."), $id));
-        }
-    }
-
     public function getSettings(array $idList)
     {
-        $settingList = [];
+        $settings = [];
 
         foreach ($idList as $id) {
-            $settingList[$id] = $this->getSetting($id);
+            $settings[$id] = $this->settings[$id];
         }
 
-        return $settingList;
+        return $settings;
     }
 
     public function saveSetting(AbstractSetting $setting, $force = false)
     {
-        $this->persistSetting($setting, $force);
-        $this->entityManager->flush();
+        $this->saveSettings([$setting], $force);
     }
 
-    public function saveSettings(array $settingList, $force = false)
+    public function saveSettings(array $settings, $force = false)
     {
         try {
-            $this->entityManager->getConnection()->beginTransaction();
+            $this->entityManager->beginTransaction();
 
-            foreach ($settingList as $setting) {
-                $this->persistSetting($setting, $force);
+            $ids = array_map(function(AbstractSetting $setting){ return $setting->getId(); }, $settings);
+
+            // preload all to avoid multiple single row selects
+            $entities = $this->entityManager
+                ->createQueryBuilder()
+                ->select("setting")
+                ->from(self::ENTITY_NAME, "setting", "id")
+                ->where("setting.id IN (:id)")
+                ->setParameter("id",  $ids)
+                ->getQuery()->getResult();
+
+            foreach ($settings as $setting) {
+                $id = $setting->getId();
+
+                if (!isset($entities[$id]))
+                    throw new SettingNotFoundException(sprintf("Oops, setting `%s` not found in database.", $id));
+
+                if (! $force && $setting->isReadonly()) {
+                    throw new SettingReadonlyException(sprintf("Setting `%s` is read-only.", $id));
+                }
+
+                $entities[$id]->setValue($setting->getValue());
+                $this->entityManager->persist($entities[$id]);
             }
 
             $this->entityManager->flush();
-            $this->entityManager->getConnection()->commit();
-        } catch (\Exception $e) {
-            $this->entityManager->getConnection()->rollback();
+            $this->entityManager->commit();
+        } catch (Exception $e) {
+            $this->entityManager->rollBack();
             throw $e;
         }
-    }
-
-    private function persistSetting($setting, $force = false)
-    {
-        if (! $force && $setting->isReadonly()) {
-            throw new SettingReadonlyException(sprintf(Translate::t("Setting `%s` is read-only."), $setting->getId()));
-        }
-
-        $entity = $this->getSettingEntity($setting->getId());
-        $entity->setValue($setting->getValue());
-        $this->entityManager->persist($entity);
-    }
-
-    private function getSettingEntity($id)
-    {
-        $entity = $this->entityManager->find($this->entityName, $id);
-
-        if (! $entity) {
-            throw new SettingNotFoundException(sprintf(Translate::t("Setting `%s` does not exist."), $id));
-        }
-
-        return $entity;
     }
 }

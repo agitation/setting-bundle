@@ -7,40 +7,13 @@
  * @license    http://opensource.org/licenses/MIT
  */
 
-namespace Agit\SettingBundle\Plugin;
+namespace Agit\SettingBundle\Service;
 
-use Agit\BaseBundle\Pluggable\Depends;
-use Agit\BaseBundle\Pluggable\Entity\EntityPluginInterface;
-use Agit\BaseBundle\Pluggable\ServiceAwarePluginInterface;
-use Agit\BaseBundle\Pluggable\ServiceAwarePluginTrait;
-
-/**
- * @Depends({"@agit.validation"})
- */
-abstract class AbstractSetting implements EntityPluginInterface, ServiceAwarePluginInterface
+abstract class AbstractSetting
 {
-    use ServiceAwarePluginTrait;
-
     private $value;
 
     private $seeds = [];
-
-    final public function loadSeedData()
-    {
-        $this->seeds["AgitSettingBundle:Setting"] =
-        [
-            ['id' => $this->getId(), 'value' => $this->getDefaultValue()]
-        ];
-    }
-
-    final public function nextSeedEntry($entityName)
-    {
-        $val = array_key_exists($entityName, $this->seeds)
-            ? array_pop($this->seeds[$entityName])
-            : null;
-
-        return $val;
-    }
 
     final public function setEntity($entity)
     {
@@ -60,7 +33,7 @@ abstract class AbstractSetting implements EntityPluginInterface, ServiceAwarePlu
 
     /**
      * Read-only settings cannot be edited through the API (i.e. by a "normal"
-     * admin), but they can and have to be set programmatically by calling
+     * admin). Instead, they can and have to be set programmatically by calling
      * SettingService::saveSetting directly with the $force parameter set to true.
      */
     public function isReadonly()

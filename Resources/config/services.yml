@@ -1,5 +1,10 @@
 services:
-    agit.settings:
+    agit.setting:
         class: Agit\SettingBundle\Service\SettingService
-        arguments: [ @agit.pluggable.entity.loader_factory, @doctrine.orm.entity_manager ]
-        tags: [{ name: agit.pluggable, type: entity, tag: agit.setting, entity: AgitSettingBundle:Setting, baseClass: Agit\SettingBundle\Plugin\AbstractSetting }]
+        arguments: [ "@doctrine.orm.entity_manager" ]
+        tags: [{ name: kernel.event_listener, event: agit.seed, method: registerSeed }]
+
+    agit.setting.seed.usercapability:
+        private: true
+        class: Agit\SettingBundle\Service\UserCapabilitySeed
+        tags: [{ name: kernel.event_listener, event: agit.seed, method: registerSeed }]

@@ -20,15 +20,15 @@ class Settings extends AbstractController
 {
     /**
      * @Endpoint\Endpoint(request="common.v1/String[]",response="Setting[]")
-     * @Endpoint\Security(capability="agit.settings.read")
-     * @Depends({"@agit.settings"})
+     * @Endpoint\Security(capability="agit.setting.read")
+     * @Depends({"@agit.setting"})
      *
      * Load application settings by setting names.
      */
     protected function load(array $names)
     {
         $result = [];
-        $settingList = $this->getService("agit.settings")->getSettings($names);
+        $settingList = $this->getService("agit.setting")->getSettings($names);
 
         foreach ($settingList as $setting) {
             $result[] = $this->createObject("Setting", (object) [
@@ -41,8 +41,8 @@ class Settings extends AbstractController
 
     /**
      * @Endpoint\Endpoint(request="Setting[]",response="Setting[]")
-     * @Endpoint\Security(capability="agit.settings.write")
-     * @Depends({"@agit.settings"})
+     * @Endpoint\Security(capability="agit.setting.write")
+     * @Depends({"@agit.setting"})
      *
      * Save application settings.
      */
@@ -54,13 +54,13 @@ class Settings extends AbstractController
             $settings[$apiSetting->get("id")] = $apiSetting->get("value");
         }
 
-        $settingList = $this->getService("agit.settings")->getSettings(array_keys($settings));
+        $settingList = $this->getService("agit.setting")->getSettings(array_keys($settings));
 
         foreach ($settingList as $setting) {
             $setting->setValue($settings[$setting->getId()]);
         }
 
-        $this->getService("agit.settings")->saveSettings($settingList);
+        $this->getService("agit.setting")->saveSettings($settingList);
 
         return $this->load(array_keys($settings));
     }
