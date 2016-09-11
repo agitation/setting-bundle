@@ -20,6 +20,14 @@ abstract class AbstractSetting
         $this->value = $entity->getValue();
     }
 
+    /**
+     * @internal just for the SettingService, to bypass validation when loading from database
+     */
+    final public function _restoreValue($value)
+    {
+        $this->value = $value;
+    }
+
     final public function setValue($value)
     {
         $this->validate($value);

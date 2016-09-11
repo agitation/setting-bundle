@@ -9,18 +9,19 @@
 
 namespace Agit\SettingBundle\Service;
 
-use Exception;
-use Agit\IntlBundle\Tool\Translate;
+use Agit\SeedBundle\Event\SeedEvent;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
 use Doctrine\ORM\EntityManager;
-use Agit\SeedBundle\Event\SeedEvent;
+use Exception;
 
 class SettingService
 {
     const ENTITY_NAME = "AgitSettingBundle:Setting";
 
     private $entityManager;
+
+    private $entities;
 
     private $settings = [];
 
@@ -38,7 +39,7 @@ class SettingService
     {
         foreach ($this->settings as $setting) {
             $event->addSeedEntry(self::ENTITY_NAME, [
-                "id"   => $setting->getId(),
+                "id"    => $setting->getId(),
                 "value" => $setting->getDefaultValue()
             ]);
         }
@@ -46,11 +47,14 @@ class SettingService
 
     public function getValueOf($id)
     {
+        $this->loadSettings();
+
         return $this->settings[$id]->getValue();
     }
 
     public function getValuesOf(array $idList)
     {
+        $this->loadSettings();
         $settings = $this->getSettings($idList);
 
         return array_map(function ($setting) {
@@ -60,6 +64,8 @@ class SettingService
 
     public function getSettings(array $idList)
     {
+        $this->loadSettings();
+
         $settings = [];
 
         foreach ($idList as $id) {
@@ -76,32 +82,22 @@ class SettingService
 
     public function saveSettings(array $settings, $force = false)
     {
+        $this->loadSettings();
+
         try {
             $this->entityManager->beginTransaction();
 
-            $ids = array_map(function(AbstractSetting $setting){ return $setting->getId(); }, $settings);
-
-            // preload all to avoid multiple single row selects
-            $entities = $this->entityManager
-                ->createQueryBuilder()
-                ->select("setting")
-                ->from(self::ENTITY_NAME, "setting", "id")
-                ->where("setting.id IN (:id)")
-                ->setParameter("id",  $ids)
-                ->getQuery()->getResult();
+            $ids = array_map(function (AbstractSetting $setting) { return $setting->getId(); }, $settings);
 
             foreach ($settings as $setting) {
                 $id = $setting->getId();
-
-                if (!isset($entities[$id]))
-                    throw new SettingNotFoundException(sprintf("Oops, setting `%s` not found in database.", $id));
 
                 if (! $force && $setting->isReadonly()) {
                     throw new SettingReadonlyException(sprintf("Setting `%s` is read-only.", $id));
                 }
 
-                $entities[$id]->setValue($setting->getValue());
-                $this->entityManager->persist($entities[$id]);
+                $this->entities[$id]->setValue($setting->getValue());
+                $this->entityManager->persist($this->entities[$id]);
             }
 
             $this->entityManager->flush();
@@ -109,6 +105,24 @@ class SettingService
         } catch (Exception $e) {
             $this->entityManager->rollBack();
             throw $e;
+        }
+    }
+
+    private function loadSettings()
+    {
+        if (is_null($this->entities)) {
+            $this->entities = $this->entityManager->createQueryBuilder()
+                ->select("setting")
+                ->from(self::ENTITY_NAME, "setting", "setting.id")
+                ->getQuery()->getResult();
+
+            foreach ($this->settings as $id => $setting) {
+                if (! isset($this->entities[$id])) {
+                    throw new SettingNotFoundException(sprintf("Oops, setting `%s` not found in database.", $id));
+                }
+
+                $setting->_restoreValue($this->entities[$id]->getValue());
+            }
         }
     }
 }
