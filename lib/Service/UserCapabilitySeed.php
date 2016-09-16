@@ -17,8 +17,8 @@ class UserCapabilitySeed
     public function registerSeed(SeedEvent $event)
     {
         $capabilities = [
-            ["id" => "agit.setting.load", "name" => Translate::noopX("user capability", "Load settings")],
-            ["id" => "agit.setting.save", "name" => Translate::noopX("user capability", "Save settings")]
+            ["id" => "entity.setting.read", "name" => Translate::noopX("user capability", "Load settings")],
+            ["id" => "entity.setting.write", "name" => Translate::noopX("user capability", "Save settings")]
         ];
 
         foreach ($capabilities as $capability) {
