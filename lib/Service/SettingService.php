@@ -9,6 +9,7 @@
 
 namespace Agit\SettingBundle\Service;
 
+use Agit\IntlBundle\Tool\Translate;
 use Agit\SeedBundle\Event\SeedEvent;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
@@ -75,9 +76,9 @@ class SettingService
         return $settings;
     }
 
-    public function saveSetting(AbstractSetting $setting, $force = false)
+    public function saveSetting($id, $value, $force = false)
     {
-        $this->saveSettings([$setting], $force);
+        $this->saveSettings([$id => $value], $force);
     }
 
     public function saveSettings(array $settings, $force = false)
@@ -87,16 +88,18 @@ class SettingService
         try {
             $this->entityManager->beginTransaction();
 
-            $ids = array_map(function (AbstractSetting $setting) { return $setting->getId(); }, $settings);
+            foreach ($settings as $id => $value) {
+                if (!isset($this->settings[$id]))
+                    throw new SettingNotFoundException(sprintf(Translate::t("A setting `%s` does not exist."), $id));
 
-            foreach ($settings as $setting) {
-                $id = $setting->getId();
+                $setting = $this->settings[$id];
 
                 if (! $force && $setting->isReadonly()) {
                     throw new SettingReadonlyException(sprintf("Setting `%s` is read-only.", $id));
                 }
 
-                $this->entities[$id]->setValue($setting->getValue());
+                $setting->setValue($value); // implicitely validates
+                $this->entities[$id]->setValue($value);
                 $this->entityManager->persist($this->entities[$id]);
             }
 

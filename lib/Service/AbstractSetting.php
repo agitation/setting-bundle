@@ -56,7 +56,7 @@ abstract class AbstractSetting
     abstract public function getDefaultValue();
 
     /**
-     * Must throw an exception if the value is invalid.
+     * @throws InvalidSettingValueException if the value is invalid.
      */
     abstract public function validate($value);
 }
