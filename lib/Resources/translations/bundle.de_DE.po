@@ -3,28 +3,12 @@ msgstr ""
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:27
-#: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:27
+#: @AgitSettingBundle/Service/UserCapabilitySeed.php:20
 msgctxt "user capability"
 msgid "Load settings"
 msgstr ""
 
-#: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:28
-#: @AgitSettingBundle/Plugin/UserCapabilitySeedPlugin.php:28
+#: @AgitSettingBundle/Service/UserCapabilitySeed.php:21
 msgctxt "user capability"
 msgid "Save settings"
-msgstr ""
-
-#: @AgitSettingBundle/Service/SettingService.php:61
-#: @AgitSettingBundle/Service/SettingService.php:115
-#: @AgitSettingBundle/Service/SettingService.php:61
-#: @AgitSettingBundle/Service/SettingService.php:115
-#, php-format
-msgid "Setting `%s` does not exist."
-msgstr ""
-
-#: @AgitSettingBundle/Service/SettingService.php:103
-#: @AgitSettingBundle/Service/SettingService.php:103
-#, php-format
-msgid "Setting `%s` is read-only."
 msgstr ""
