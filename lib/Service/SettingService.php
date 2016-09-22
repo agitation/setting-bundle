@@ -13,6 +13,7 @@ use Agit\IntlBundle\Tool\Translate;
 use Agit\SeedBundle\Event\SeedEvent;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
+use Agit\SettingBundle\Exception\InvalidSettingValueException;
 use Doctrine\ORM\EntityManager;
 use Exception;
 
@@ -98,8 +99,17 @@ class SettingService
                     throw new SettingReadonlyException(sprintf("Setting `%s` is read-only.", $id));
                 }
 
-                $setting->setValue($value); // implicitely validates
-                $this->entities[$id]->setValue($value);
+                try {
+                    $setting->setValue($value); // implicitely validates
+                    $this->entities[$id]->setValue($value);
+                } catch (Exception $e) {
+                    throw new InvalidSettingValueException(sprintf(
+                        Translate::t("Invalid value for “%s”: %s"),
+                        $setting->getName(),
+                        $e->getMessage()
+                    ));
+                }
+
                 $this->entityManager->persist($this->entities[$id]);
             }
 
