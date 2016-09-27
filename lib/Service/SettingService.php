@@ -18,7 +18,9 @@ use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
 use Doctrine\ORM\EntityManager;
 use Exception;
+use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Agit\LoggingBundle\Service\Logger;
 
 class SettingService
 {
@@ -28,14 +30,17 @@ class SettingService
 
     private $eventDispatcher;
 
+    private $logger;
+
     private $entities;
 
     private $settings = [];
 
-    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher)
+    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher, Logger $logger = null)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->logger = $logger;
     }
 
     public function addSetting(AbstractSetting $setting)
@@ -152,6 +157,16 @@ class SettingService
             }
 
             $this->entityManager->flush();
+
+            if ($this->logger && count($changedSettings)) {
+                $this->logger->log(
+                    LogLevel::NOTICE,
+                    "agit.settings",
+                    sprintf(Translate::tl("The following settings have been changed: %s"), implode(", ", $changedSettingNames)),
+                    true
+                );
+            }
+
             $this->entityManager->commit();
         } catch (Exception $e) {
             $this->entityManager->rollBack();
