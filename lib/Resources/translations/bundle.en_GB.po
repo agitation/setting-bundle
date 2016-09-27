@@ -12,3 +12,11 @@ msgstr ""
 msgctxt "user capability"
 msgid "Save settings"
 msgstr ""
+
+#: @AgitSettingBundle/Service/SettingService.php:98
+msgid "A setting `%s` does not exist."
+msgstr ""
+
+#: @AgitSettingBundle/Service/SettingService.php:111
+msgid "Invalid value for “%s”: %s"
+msgstr ""

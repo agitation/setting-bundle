@@ -6,9 +6,17 @@ msgstr ""
 #: @AgitSettingBundle/Service/UserCapabilitySeed.php:20
 msgctxt "user capability"
 msgid "Load settings"
-msgstr ""
+msgstr "Einstellungen laden"
 
 #: @AgitSettingBundle/Service/UserCapabilitySeed.php:21
 msgctxt "user capability"
 msgid "Save settings"
-msgstr ""
+msgstr "Einstellungen speichern"
+
+#: @AgitSettingBundle/Service/SettingService.php:98
+msgid "A setting `%s` does not exist."
+msgstr "Die Einstellung `%s` existiert nicht."
+
+#: @AgitSettingBundle/Service/SettingService.php:111
+msgid "Invalid value for “%s”: %s"
+msgstr "Ungültiger Wert für „%s“: %s"
