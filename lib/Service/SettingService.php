@@ -11,11 +11,14 @@ namespace Agit\SettingBundle\Service;
 
 use Agit\IntlBundle\Tool\Translate;
 use Agit\SeedBundle\Event\SeedEvent;
+use Agit\SettingBundle\Event\SettingsLoadedEvent;
+use Agit\SettingBundle\Event\SettingsModifiedEvent;
 use Agit\SettingBundle\Exception\InvalidSettingValueException;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
 use Doctrine\ORM\EntityManager;
 use Exception;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SettingService
 {
@@ -23,13 +26,16 @@ class SettingService
 
     private $entityManager;
 
+    private $eventDispatcher;
+
     private $entities;
 
     private $settings = [];
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function addSetting(AbstractSetting $setting)
@@ -106,6 +112,8 @@ class SettingService
     public function saveSettings(array $settings, $force = false)
     {
         $this->loadSettings();
+        $changedSettings = [];
+        $changedSettingNames = [];
 
         try {
             $this->entityManager->beginTransaction();
@@ -121,9 +129,17 @@ class SettingService
                     throw new SettingReadonlyException(sprintf("Setting `%s` is read-only.", $id));
                 }
 
+
                 try {
+                    $oldValue = $setting->getValue();
                     $setting->setValue($value); // implicitely validates
                     $this->entities[$id]->setValue($value);
+
+                    if ($oldValue !== $value) {
+                        $changedSettings[$id] = ["old" => $oldValue, "new" => $value];
+                        $changedSettingNames[] = $setting->getName();
+                    }
+
                 } catch (Exception $e) {
                     throw new InvalidSettingValueException(sprintf(
                         Translate::t("Invalid value for “%s”: %s"),
@@ -140,6 +156,19 @@ class SettingService
         } catch (Exception $e) {
             $this->entityManager->rollBack();
             throw $e;
+        }
+
+        if ($changedSettings)
+        {
+            $this->eventDispatcher->dispatch(
+                "agit.settings.modified",
+                new SettingsModifiedEvent($this, $changedSettings)
+            );
+
+            $this->eventDispatcher->dispatch(
+                "agit.settings.loaded",
+                new SettingsLoadedEvent($this)
+            );
         }
     }
 
@@ -158,6 +187,11 @@ class SettingService
 
                 $setting->_restoreValue($this->entities[$id]->getValue());
             }
+
+            $this->eventDispatcher->dispatch(
+                "agit.settings.loaded",
+                new SettingsLoadedEvent($this)
+            );
         }
     }
 }
