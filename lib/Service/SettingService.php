@@ -71,6 +71,10 @@ class SettingService
         $settings = [];
 
         foreach ($idList as $id) {
+
+            if (!isset($settings[$id]))
+                throw new SettingNotFoundException("The setting `$id` does not exist.");
+
             $settings[$id] = $this->settings[$id];
         }
 
