@@ -11,9 +11,9 @@ namespace Agit\SettingBundle\Service;
 
 use Agit\IntlBundle\Tool\Translate;
 use Agit\SeedBundle\Event\SeedEvent;
+use Agit\SettingBundle\Exception\InvalidSettingValueException;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
-use Agit\SettingBundle\Exception\InvalidSettingValueException;
 use Doctrine\ORM\EntityManager;
 use Exception;
 
@@ -47,6 +47,23 @@ class SettingService
         }
     }
 
+    public function getNameOf($id)
+    {
+        $this->loadSettings();
+
+        return $this->settings[$id]->getName();
+    }
+
+    public function getNamesOf(array $idList)
+    {
+        $this->loadSettings();
+        $settings = $this->getSettings($idList);
+
+        return array_map(function ($setting) {
+            return $setting->getName();
+        }, $settings);
+    }
+
     public function getValueOf($id)
     {
         $this->loadSettings();
@@ -71,9 +88,9 @@ class SettingService
         $settings = [];
 
         foreach ($idList as $id) {
-
-            if (!isset($this->settings[$id]))
+            if (! isset($this->settings[$id])) {
                 throw new SettingNotFoundException("The setting `$id` does not exist.");
+            }
 
             $settings[$id] = $this->settings[$id];
         }
@@ -94,8 +111,9 @@ class SettingService
             $this->entityManager->beginTransaction();
 
             foreach ($settings as $id => $value) {
-                if (!isset($this->settings[$id]))
+                if (! isset($this->settings[$id])) {
                     throw new SettingNotFoundException(sprintf(Translate::t("A setting `%s` does not exist."), $id));
+                }
 
                 $setting = $this->settings[$id];
 
