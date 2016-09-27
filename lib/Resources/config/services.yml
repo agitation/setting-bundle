@@ -4,9 +4,14 @@ services:
         arguments: [ "@doctrine.orm.entity_manager", "@event_dispatcher", "@agit.logger" ]
         tags: [{ name: kernel.event_listener, event: agit.seed, method: registerSeed }]
 
-    agit.setting.seed.usercapability:
+    agit.setting.seed.user_capability:
         private: true
         class: Agit\SettingBundle\Service\UserCapabilitySeed
+        tags: [{ name: kernel.event_listener, event: agit.seed, method: registerSeed }]
+
+    agit.setting.seed.logentry_category:
+        private: true
+        class: Agit\SettingBundle\Service\LogentryCategorySeed
         tags: [{ name: kernel.event_listener, event: agit.seed, method: registerSeed }]
 
     agit.setting.twig:
