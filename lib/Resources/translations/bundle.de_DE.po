@@ -13,10 +13,19 @@ msgctxt "user capability"
 msgid "Save settings"
 msgstr "Einstellungen speichern"
 
-#: @AgitSettingBundle/Service/SettingService.php:98
+#: @AgitSettingBundle/Service/LogentryCategorySeed.php:21
+msgctxt "logging category"
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: @AgitSettingBundle/Service/SettingService.php:128
 msgid "A setting `%s` does not exist."
 msgstr "Die Einstellung `%s` existiert nicht."
 
-#: @AgitSettingBundle/Service/SettingService.php:111
+#: @AgitSettingBundle/Service/SettingService.php:150
 msgid "Invalid value for “%s”: %s"
 msgstr "Ungültiger Wert für „%s“: %s"
+
+#: @AgitSettingBundle/Service/SettingService.php:165
+msgid "The following settings have been changed: %s"
+msgstr "Die folgenden Einstellungen wurden geändert: %s"
