@@ -160,7 +160,7 @@ class SettingService
 
             if ($this->logger && count($changedSettings)) {
                 $this->logger->log(
-                    LogLevel::NOTICE,
+                    LogLevel::INFO,
                     "agit.settings",
                     sprintf(Translate::tl("The following settings have been changed: %s"), implode(", ", $changedSettingNames)),
                     true
