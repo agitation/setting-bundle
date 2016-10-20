@@ -41,6 +41,15 @@ class SettingsExtension extends Twig_Extension
 
     public function getSettings(array $ids)
     {
-        return $this->settingService->getValuesOf($ids);
+        $settings = $this->settingService->getValuesOf($ids);
+
+        // NOTE: we're reusing the $ids array intentionally
+        // in order to preserve the passed keys
+
+        foreach ($ids as $key => $name) {
+            $ids[$key] = $settings[$name];
+        };
+
+        return $ids;
     }
 }
