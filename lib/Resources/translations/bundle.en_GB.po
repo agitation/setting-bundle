@@ -22,10 +22,10 @@ msgstr ""
 msgid "A setting `%s` does not exist."
 msgstr ""
 
-#: @AgitSettingBundle/Service/SettingService.php:150
+#: @AgitSettingBundle/Service/SettingService.php:148
 msgid "Invalid value for “%s”: %s"
 msgstr ""
 
-#: @AgitSettingBundle/Service/SettingService.php:165
+#: @AgitSettingBundle/Service/SettingService.php:163
 msgid "The following settings have been changed: %s"
 msgstr ""
