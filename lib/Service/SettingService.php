@@ -10,6 +10,7 @@
 namespace Agit\SettingBundle\Service;
 
 use Agit\IntlBundle\Tool\Translate;
+use Agit\LoggingBundle\Service\Logger;
 use Agit\SeedBundle\Event\SeedEvent;
 use Agit\SettingBundle\Event\SettingsLoadedEvent;
 use Agit\SettingBundle\Event\SettingsModifiedEvent;
@@ -20,7 +21,6 @@ use Doctrine\ORM\EntityManager;
 use Exception;
 use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Agit\LoggingBundle\Service\Logger;
 
 class SettingService
 {
@@ -134,7 +134,6 @@ class SettingService
                     throw new SettingReadonlyException(sprintf("Setting `%s` is read-only.", $id));
                 }
 
-
                 try {
                     $oldValue = $setting->getValue();
                     $setting->setValue($value); // implicitely validates
@@ -144,7 +143,6 @@ class SettingService
                         $changedSettings[$id] = ["old" => $oldValue, "new" => $value];
                         $changedSettingNames[] = $setting->getName();
                     }
-
                 } catch (Exception $e) {
                     throw new InvalidSettingValueException(sprintf(
                         Translate::t("Invalid value for “%s”: %s"),
@@ -173,8 +171,7 @@ class SettingService
             throw $e;
         }
 
-        if ($changedSettings)
-        {
+        if ($changedSettings) {
             $this->eventDispatcher->dispatch(
                 "agit.settings.modified",
                 new SettingsModifiedEvent($this, $changedSettings)
