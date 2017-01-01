@@ -193,11 +193,11 @@ class SettingService
                 ->getQuery()->getResult();
 
             foreach ($this->settings as $id => $setting) {
-                if (! isset($this->entities[$id])) {
-                    throw new SettingNotFoundException(sprintf("Oops, setting `%s` not found in database.", $id));
-                }
+                $value = isset($this->entities[$id])
+                    ? $this->entities[$id]->getValue()
+                    : $setting->getDefaultValue();
 
-                $setting->_restoreValue($this->entities[$id]->getValue());
+                $setting->_restoreValue($value);
             }
 
             $this->eventDispatcher->dispatch(
