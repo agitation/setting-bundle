@@ -9,12 +9,12 @@
 
 namespace Agit\SettingBundle\Exception;
 
-use Agit\BaseBundle\Exception\AgitException;
+use Agit\BaseBundle\Exception\PublicException;
 
 /**
  * Passed an invalid value for a setting.
  */
-class InvalidSettingValueException extends AgitException
+class InvalidSettingValueException extends PublicException
 {
     protected $statusCode = 400;
 }

@@ -9,12 +9,12 @@
 
 namespace Agit\SettingBundle\Exception;
 
-use Agit\BaseBundle\Exception\AgitException;
+use Agit\BaseBundle\Exception\PublicException;
 
 /**
  * Tried to modify a setting which is read-only.
  */
-class SettingReadonlyException extends AgitException
+class SettingReadonlyException extends PublicException
 {
     protected $statusCode = 400;
 }
