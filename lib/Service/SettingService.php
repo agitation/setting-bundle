@@ -10,7 +10,6 @@
 namespace Agit\SettingBundle\Service;
 
 use Agit\IntlBundle\Tool\Translate;
-use Agit\LoggingBundle\Service\Logger;
 use Agit\SeedBundle\Event\SeedEvent;
 use Agit\SettingBundle\Event\SettingsLoadedEvent;
 use Agit\SettingBundle\Event\SettingsModifiedEvent;
@@ -19,7 +18,6 @@ use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SettingService
@@ -30,17 +28,14 @@ class SettingService
 
     private $eventDispatcher;
 
-    private $logger;
-
     private $entities;
 
     private $settings = [];
 
-    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher, Logger $logger = null)
+    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
-        $this->logger = $logger;
     }
 
     public function addSetting(AbstractSetting $setting)
@@ -120,56 +115,38 @@ class SettingService
         $changedSettings = [];
         $changedSettingNames = [];
 
-        try {
-            $this->entityManager->beginTransaction();
-
-            foreach ($settings as $id => $value) {
-                if (! isset($this->settings[$id])) {
-                    throw new SettingNotFoundException(sprintf(Translate::t("A setting `%s` does not exist."), $id));
-                }
-
-                $setting = $this->settings[$id];
-
-                if (! $force && $setting->isReadonly()) {
-                    throw new SettingReadonlyException(sprintf("Setting `%s` is read-only.", $id));
-                }
-
-                try {
-                    $oldValue = $setting->getValue();
-                    $setting->setValue($value); // implicitely validates
-                    $this->entities[$id]->setValue($value);
-
-                    if ($oldValue !== $value) {
-                        $changedSettings[$id] = ["old" => $oldValue, "new" => $value];
-                        $changedSettingNames[] = $setting->getName();
-                    }
-                } catch (Exception $e) {
-                    throw new InvalidSettingValueException(sprintf(
-                        Translate::t("Invalid value for “%s”: %s"),
-                        $setting->getName(),
-                        $e->getMessage()
-                    ));
-                }
-
-                $this->entityManager->persist($this->entities[$id]);
+        foreach ($settings as $id => $value) {
+            if (! isset($this->settings[$id])) {
+                throw new SettingNotFoundException(sprintf(Translate::t("A setting `%s` does not exist."), $id));
             }
 
-            $this->entityManager->flush();
+            $setting = $this->settings[$id];
 
-            if ($this->logger && count($changedSettings)) {
-                $this->logger->log(
-                    LogLevel::INFO,
-                    "agit.settings",
-                    sprintf(Translate::tl("The following settings have been changed: %s"), implode(", ", $changedSettingNames)),
-                    true
-                );
+            if (! $force && $setting->isReadonly()) {
+                throw new SettingReadonlyException(sprintf("Setting `%s` is read-only.", $id));
             }
 
-            $this->entityManager->commit();
-        } catch (Exception $e) {
-            $this->entityManager->rollBack();
-            throw $e;
+            try {
+                $oldValue = $setting->getValue();
+                $setting->setValue($value); // implicitely validates
+                $this->entities[$id]->setValue($value);
+
+                if ($oldValue !== $value) {
+                    $changedSettings[$id] = ["old" => $oldValue, "new" => $value];
+                    $changedSettingNames[] = $setting->getName();
+                }
+            } catch (Exception $e) {
+                throw new InvalidSettingValueException(sprintf(
+                    Translate::t("Invalid value for “%s”: %s"),
+                    $setting->getName(),
+                    $e->getMessage()
+                ));
+            }
+
+            $this->entityManager->persist($this->entities[$id]);
         }
+
+        $this->entityManager->flush();
 
         if ($changedSettings) {
             $this->eventDispatcher->dispatch(
