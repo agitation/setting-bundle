@@ -17,6 +17,7 @@ use Agit\SettingBundle\Exception\InvalidSettingValueException;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -24,15 +25,23 @@ class SettingService
 {
     const ENTITY_NAME = "AgitSettingBundle:Setting";
 
+    const RESULT_CACHE_KEY = "agit.settings.all";
+
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
+    /**
+     * @var EventDispatcherInterface
+     */
     private $eventDispatcher;
 
     private $entities;
 
     private $settings = [];
 
-    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -149,6 +158,8 @@ class SettingService
         $this->entityManager->flush();
 
         if ($changedSettings) {
+            $this->entityManager->getConfiguration()->getResultCacheImpl()->delete(self::RESULT_CACHE_KEY);
+
             $this->eventDispatcher->dispatch(
                 "agit.settings.modified",
                 new SettingsModifiedEvent($this, $changedSettings)
@@ -167,7 +178,9 @@ class SettingService
             $this->entities = $this->entityManager->createQueryBuilder()
                 ->select("setting")
                 ->from(self::ENTITY_NAME, "setting", "setting.id")
-                ->getQuery()->getResult();
+                ->getQuery()
+                ->useResultCache(true, 86400, self::RESULT_CACHE_KEY)
+                ->getResult();
 
             foreach ($this->settings as $id => $setting) {
                 $value = isset($this->entities[$id])
