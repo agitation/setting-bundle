@@ -186,12 +186,22 @@ class SettingService
     {
         if ($this->entities === null)
         {
-            $this->entities = $this->entityManager->createQueryBuilder()
-                ->select('setting')
-                ->from(self::ENTITY_NAME, 'setting', 'setting.id')
-                ->getQuery()
-                ->useResultCache(true, 86400, self::RESULT_CACHE_KEY)
-                ->getResult();
+            // the following construct helps avoiding exceptions during cache warming
+            // when trying to access a not-yet-created database.
+
+            try
+            {
+                $this->entityManager->getConnection()->ping();
+
+                $this->entities = $this->entityManager->createQueryBuilder()
+                    ->select('setting')
+                    ->from(self::ENTITY_NAME, 'setting', 'setting.id')
+                    ->getQuery()->getResult();
+            }
+            catch (Exception $e)
+            {
+                $this->entities = [];
+            }
 
             foreach ($this->settings as $id => $setting)
             {
