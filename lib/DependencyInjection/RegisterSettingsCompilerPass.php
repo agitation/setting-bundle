@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /*
  * @package    agitation/setting-bundle
  * @link       http://github.com/agitation/setting-bundle
@@ -19,12 +19,14 @@ class RegisterSettingsCompilerPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $containerBuilder)
     {
-        $processor = $containerBuilder->findDefinition("agit.setting");
-        $services = $containerBuilder->findTaggedServiceIds("agit.setting");
+        $processor = $containerBuilder->findDefinition('agit.setting');
+        $services = $containerBuilder->findTaggedServiceIds('agit.setting');
 
-        foreach ($services as $name => $tags) {
-            foreach ($tags as $tag) {
-                $processor->addMethodCall("addSetting", [new Reference($name)]);
+        foreach ($services as $name => $tags)
+        {
+            foreach ($tags as $tag)
+            {
+                $processor->addMethodCall('addSetting', [new Reference($name)]);
             }
         }
     }

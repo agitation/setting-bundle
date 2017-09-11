@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /*
  * @package    agitation/setting-bundle
  * @link       http://github.com/agitation/setting-bundle
@@ -16,16 +16,15 @@ use Agit\SettingBundle\Event\SettingsModifiedEvent;
 use Agit\SettingBundle\Exception\InvalidSettingValueException;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SettingService
 {
-    const ENTITY_NAME = "AgitSettingBundle:Setting";
+    const ENTITY_NAME = 'AgitSettingBundle:Setting';
 
-    const RESULT_CACHE_KEY = "agit.settings.all";
+    const RESULT_CACHE_KEY = 'agit.settings.all';
 
     /**
      * @var EntityManagerInterface
@@ -54,10 +53,11 @@ class SettingService
 
     public function registerSeed(SeedEvent $event)
     {
-        foreach ($this->settings as $setting) {
+        foreach ($this->settings as $setting)
+        {
             $event->addSeedEntry(self::ENTITY_NAME, [
-                "id"    => $setting->getId(),
-                "value" => $setting->getDefaultValue()
+                'id' => $setting->getId(),
+                'value' => $setting->getDefaultValue()
             ]);
         }
     }
@@ -102,8 +102,10 @@ class SettingService
 
         $settings = [];
 
-        foreach ($idList as $id) {
-            if (! isset($this->settings[$id])) {
+        foreach ($idList as $id)
+        {
+            if (! isset($this->settings[$id]))
+            {
                 throw new SettingNotFoundException("The setting `$id` does not exist.");
             }
 
@@ -124,29 +126,36 @@ class SettingService
         $changedSettings = [];
         $changedSettingNames = [];
 
-        foreach ($settings as $id => $value) {
-            if (! isset($this->settings[$id])) {
-                throw new SettingNotFoundException(sprintf(Translate::t("A setting `%s` does not exist."), $id));
+        foreach ($settings as $id => $value)
+        {
+            if (! isset($this->settings[$id]))
+            {
+                throw new SettingNotFoundException(sprintf(Translate::t('A setting `%s` does not exist.'), $id));
             }
 
             $setting = $this->settings[$id];
 
-            if (! $force && $setting->isReadonly()) {
-                throw new SettingReadonlyException(sprintf("Setting `%s` is read-only.", $id));
+            if (! $force && $setting->isReadonly())
+            {
+                throw new SettingReadonlyException(sprintf('Setting `%s` is read-only.', $id));
             }
 
-            try {
+            try
+            {
                 $oldValue = $setting->getValue();
                 $setting->setValue($value); // implicitely validates
                 $this->entities[$id]->setValue($value);
 
-                if ($oldValue !== $value) {
-                    $changedSettings[$id] = ["old" => $oldValue, "new" => $value];
+                if ($oldValue !== $value)
+                {
+                    $changedSettings[$id] = ['old' => $oldValue, 'new' => $value];
                     $changedSettingNames[] = $setting->getName();
                 }
-            } catch (Exception $e) {
+            }
+            catch (Exception $e)
+            {
                 throw new InvalidSettingValueException(sprintf(
-                    Translate::t("Invalid value for “%s”: %s"),
+                    Translate::t('Invalid value for “%s”: %s'),
                     $setting->getName(),
                     $e->getMessage()
                 ));
@@ -157,16 +166,17 @@ class SettingService
 
         $this->entityManager->flush();
 
-        if ($changedSettings) {
+        if ($changedSettings)
+        {
             $this->entityManager->getConfiguration()->getResultCacheImpl()->delete(self::RESULT_CACHE_KEY);
 
             $this->eventDispatcher->dispatch(
-                "agit.settings.modified",
+                'agit.settings.modified',
                 new SettingsModifiedEvent($this, $changedSettings)
             );
 
             $this->eventDispatcher->dispatch(
-                "agit.settings.loaded",
+                'agit.settings.loaded',
                 new SettingsLoadedEvent($this)
             );
         }
@@ -174,15 +184,17 @@ class SettingService
 
     private function loadSettings()
     {
-        if (is_null($this->entities)) {
+        if ($this->entities === null)
+        {
             $this->entities = $this->entityManager->createQueryBuilder()
-                ->select("setting")
-                ->from(self::ENTITY_NAME, "setting", "setting.id")
+                ->select('setting')
+                ->from(self::ENTITY_NAME, 'setting', 'setting.id')
                 ->getQuery()
                 ->useResultCache(true, 86400, self::RESULT_CACHE_KEY)
                 ->getResult();
 
-            foreach ($this->settings as $id => $setting) {
+            foreach ($this->settings as $id => $setting)
+            {
                 $value = isset($this->entities[$id])
                     ? $this->entities[$id]->getValue()
                     : $setting->getDefaultValue();
@@ -191,7 +203,7 @@ class SettingService
             }
 
             $this->eventDispatcher->dispatch(
-                "agit.settings.loaded",
+                'agit.settings.loaded',
                 new SettingsLoadedEvent($this)
             );
         }

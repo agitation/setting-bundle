@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /*
  * @package    agitation/setting-bundle
  * @link       http://github.com/agitation/setting-bundle
@@ -22,6 +22,7 @@ abstract class AbstractSetting
 
     /**
      * @internal just for the SettingService, to bypass validation when loading from database
+     * @param mixed $value
      */
     final public function _restoreValue($value)
     {
@@ -56,7 +57,8 @@ abstract class AbstractSetting
     abstract public function getDefaultValue();
 
     /**
-     * @throws InvalidSettingValueException if the value is invalid.
+     * @throws InvalidSettingValueException if the value is invalid
+     * @param  mixed                        $value
      */
     abstract public function validate($value);
 }

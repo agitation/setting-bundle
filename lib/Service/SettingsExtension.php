@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /*
  * @package    agitation/setting-bundle
  * @link       http://github.com/agitation/setting-bundle
@@ -23,14 +23,14 @@ class SettingsExtension extends Twig_Extension
 
     public function getName()
     {
-        return "agit.settings";
+        return 'agit.settings';
     }
 
     public function getFunctions()
     {
         return [
-            new Twig_SimpleFunction("getSetting", [$this, "getSetting"], ["is_safe" => ["all"]]),
-            new Twig_SimpleFunction("getSettings", [$this, "getSettings"], ["is_safe" => ["all"]])
+            new Twig_SimpleFunction('getSetting', [$this, 'getSetting'], ['is_safe' => ['all']]),
+            new Twig_SimpleFunction('getSettings', [$this, 'getSettings'], ['is_safe' => ['all']])
         ];
     }
 
@@ -46,9 +46,10 @@ class SettingsExtension extends Twig_Extension
         // NOTE: we're reusing the $ids array intentionally
         // in order to preserve the passed keys
 
-        foreach ($ids as $key => $name) {
+        foreach ($ids as $key => $name)
+        {
             $ids[$key] = $settings[$name];
-        };
+        }
 
         return $ids;
     }
