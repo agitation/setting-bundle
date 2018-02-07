@@ -11,44 +11,36 @@ namespace Agit\SettingBundle\Service;
 
 use Agit\SettingBundle\Entity\Setting;
 
-abstract class AbstractSetting implements SettingInterface
+interface SettingInterface
 {
-    private $value;
-
-    private $seeds = [];
-
-    final public function setEntity(Setting $entity)
-    {
-        $this->value = $entity->getValue();
-    }
+    public function setEntity(Setting $setting);
 
     /**
      * @internal just for the SettingService, to bypass validation when loading from database
      * @param mixed $value
      */
-    final public function _restoreValue($value)
-    {
-        $this->value = $value;
-    }
+    public function _restoreValue($value);
 
-    final public function setValue($value)
-    {
-        $this->validate($value);
-        $this->value = $value;
-    }
+    public function setValue($value);
 
-    final public function getValue()
-    {
-        return $this->value;
-    }
+    public function getValue();
 
     /**
      * Read-only settings cannot be edited through the API (i.e. by a "normal"
      * admin). Instead, they can and have to be set programmatically by calling
      * SettingService::saveSetting directly with the $force parameter set to true.
      */
-    public function isReadonly()
-    {
-        return false;
-    }
+    public function isReadonly();
+
+    public function getId();
+
+    public function getName();
+
+    public function getDefaultValue();
+
+    /**
+     * @throws InvalidSettingValueException if the value is invalid
+     * @param  mixed                        $value
+     */
+    public function validate($value);
 }
