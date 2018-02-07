@@ -8,3 +8,6 @@ services:
         class: Agit\SettingBundle\Service\SettingsExtension
         arguments:  [ "@agit.setting" ]
         tags: [{ name: twig.extension }]
+
+    # transional alias to allow autowiring
+    Agit\SettingBundle\Service\SettingService: '@agit.setting'
