@@ -24,8 +24,6 @@ class SettingService
 {
     const ENTITY_NAME = 'AgitSettingBundle:Setting';
 
-    const RESULT_CACHE_KEY = 'agit.settings.all';
-
     /**
      * @var EntityManagerInterface
      */
@@ -36,9 +34,26 @@ class SettingService
      */
     private $eventDispatcher;
 
+    /**
+     * setting entities loaded from the database
+     *
+     * @var array|null
+     */
     private $entities;
 
+    /**
+     * available settings
+     *
+     * @var array
+     */
     private $settings = [];
+
+    /**
+     * settings which must be refreshed
+     *
+     * @var array
+     */
+    private $pending = [];
 
     public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
     {
@@ -48,7 +63,12 @@ class SettingService
 
     public function addSetting(AbstractSetting $setting)
     {
-        $this->settings[$setting->getId()] = $setting;
+        // we cannot add the setting immediately to the $this->settings array, because
+        // it has to be initialized first. And we cannot initialize it here right now,
+        // because this could trigger dependencies calling our getValueOf method too
+        // early, so we have to defer it until the first actual request.
+
+        $this->pending[$setting->getId()] = $setting;
     }
 
     public function registerSeed(SeedEvent $event)
@@ -64,14 +84,14 @@ class SettingService
 
     public function getNameOf($id)
     {
-        $this->loadSettings();
+        $this->load();
 
         return $this->settings[$id]->getName();
     }
 
     public function getNamesOf(array $idList)
     {
-        $this->loadSettings();
+        $this->load();
         $settings = $this->getSettings($idList);
 
         return array_map(function ($setting) {
@@ -81,38 +101,18 @@ class SettingService
 
     public function getValueOf($id)
     {
-        $this->loadSettings();
-
+        $this->load();
         return $this->settings[$id]->getValue();
     }
 
     public function getValuesOf(array $idList)
     {
-        $this->loadSettings();
+        $this->load();
         $settings = $this->getSettings($idList);
 
         return array_map(function ($setting) {
             return $setting->getValue();
         }, $settings);
-    }
-
-    public function getSettings(array $idList)
-    {
-        $this->loadSettings();
-
-        $settings = [];
-
-        foreach ($idList as $id)
-        {
-            if (! isset($this->settings[$id]))
-            {
-                throw new SettingNotFoundException("The setting `$id` does not exist.");
-            }
-
-            $settings[$id] = $this->settings[$id];
-        }
-
-        return $settings;
     }
 
     public function saveSetting($id, $value, $force = false)
@@ -122,7 +122,7 @@ class SettingService
 
     public function saveSettings(array $settings, $force = false)
     {
-        $this->loadSettings();
+        $this->load();
         $changedSettings = [];
         $changedSettingNames = [];
 
@@ -165,24 +165,28 @@ class SettingService
         }
 
         $this->entityManager->flush();
-
-        if ($changedSettings)
-        {
-            $this->entityManager->getConfiguration()->getResultCacheImpl()->delete(self::RESULT_CACHE_KEY);
-
-            $this->eventDispatcher->dispatch(
-                'agit.settings.modified',
-                new SettingsModifiedEvent($this, $changedSettings)
-            );
-
-            $this->eventDispatcher->dispatch(
-                'agit.settings.loaded',
-                new SettingsLoadedEvent($this)
-            );
-        }
     }
 
-    private function loadSettings()
+    private function getSettings(array $idList)
+    {
+        $this->load();
+
+        $settings = [];
+
+        foreach ($idList as $id)
+        {
+            if (! isset($this->settings[$id]))
+            {
+                throw new SettingNotFoundException("The setting `$id` does not exist.");
+            }
+
+            $settings[$id] = $this->settings[$id];
+        }
+
+        return $settings;
+    }
+
+    private function load()
     {
         if ($this->entities === null)
         {
@@ -202,20 +206,18 @@ class SettingService
             {
                 $this->entities = [];
             }
-
-            foreach ($this->settings as $id => $setting)
-            {
-                $value = isset($this->entities[$id])
-                    ? $this->entities[$id]->getValue()
-                    : $setting->getDefaultValue();
-
-                $setting->_restoreValue($value);
-            }
-
-            $this->eventDispatcher->dispatch(
-                'agit.settings.loaded',
-                new SettingsLoadedEvent($this)
-            );
         }
+
+        foreach ($this->pending as $id => $setting)
+        {
+            $value = isset($this->entities[$id])
+                ? $this->entities[$id]->getValue()
+                : $setting->getDefaultValue();
+
+            $setting->_restoreValue($value);
+            $this->settings[$id] = $setting;
+        }
+
+        $this->pending = [];
     }
 }
