@@ -73,6 +73,8 @@ class SettingService
 
     public function registerSeed(SeedEvent $event)
     {
+        $this->load();
+
         foreach ($this->settings as $setting)
         {
             $event->addSeedEntry(self::ENTITY_NAME, [
