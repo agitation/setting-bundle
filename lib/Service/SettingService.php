@@ -91,6 +91,18 @@ class SettingService
         return $this->settings[$id]->getName();
     }
 
+    public function getSetting($id)
+    {
+        $this->load();
+
+        if (! isset($this->settings[$id]))
+        {
+            throw new SettingNotFoundException(sprintf(Translate::t('A setting `%s` does not exist.'), $id));
+        }
+
+        return $this->settings[$id];
+    }
+
     public function getNamesOf(array $idList)
     {
         $this->load();
@@ -144,11 +156,12 @@ class SettingService
 
             try
             {
-                $oldValue = $setting->getValue();
+                $oldValue = $setting->_getRealValue();
                 $setting->setValue($value); // implicitely validates
-                $this->entities[$id]->setValue($value);
+                $newValue = $setting->_getRealValue();
+                $this->entities[$id]->setValue($newValue);
 
-                if ($oldValue !== $value)
+                if ($oldValue !== $newValue)
                 {
                     $changedSettings[$id] = ['old' => $oldValue, 'new' => $value];
                     $changedSettingNames[] = $setting->getName();
@@ -216,7 +229,7 @@ class SettingService
                 ? $this->entities[$id]->getValue()
                 : $setting->getDefaultValue();
 
-            $setting->_restoreValue($value);
+            $setting->_setRealValue($value);
             $this->settings[$id] = $setting;
         }
 

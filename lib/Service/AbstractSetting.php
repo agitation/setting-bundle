@@ -13,7 +13,7 @@ use Agit\SettingBundle\Entity\Setting;
 
 abstract class AbstractSetting implements SettingInterface
 {
-    private $value;
+    protected $value;
 
     private $seeds = [];
 
@@ -26,18 +26,33 @@ abstract class AbstractSetting implements SettingInterface
      * @internal just for the SettingService, to bypass validation when loading from database
      * @param mixed $value
      */
-    final public function _restoreValue($value)
+    public function _setRealValue($value)
     {
         $this->value = $value;
     }
 
-    final public function setValue($value)
+    /**
+     * @internal just for the SettingService, to bypass validation when loading from database
+     * @param mixed $value
+     */
+    public function _getRealValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param mixed $value setter for the "public" value
+     */
+    public function setValue($value)
     {
         $this->validate($value);
         $this->value = $value;
     }
 
-    final public function getValue()
+    /**
+     * @return mixed the "public" value
+     */
+    public function getValue()
     {
         return $this->value;
     }

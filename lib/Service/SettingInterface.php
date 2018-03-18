@@ -16,10 +16,16 @@ interface SettingInterface
     public function setEntity(Setting $setting);
 
     /**
-     * @internal just for the SettingService, to bypass validation when loading from database
+     * @internal just for the SettingService, to inject the value stored in the DB
      * @param mixed $value
      */
-    public function _restoreValue($value);
+    public function _setRealValue($value);
+
+    /**
+     * @internal just for the SettingService, to get the value to be stored in the DB
+     * @param mixed $value
+     */
+    public function _getRealValue();
 
     public function setValue($value);
 
