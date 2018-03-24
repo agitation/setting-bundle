@@ -1,14 +1,20 @@
 <?php
 declare(strict_types=1);
 
+/*
+ * @package    agitation/setting-bundle
+ * @link       http://github.com/agitation/setting-bundle
+ * @author     Alexander Günsche
+ * @license    http://opensource.org/licenses/MIT
+ */
+
 namespace Agit\SettingBundle\Command;
 
-use Exception;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SettingsCommand extends ContainerAwareCommand
@@ -18,18 +24,20 @@ class SettingsCommand extends ContainerAwareCommand
         $this->setName('agit:settings')
             ->setDescription('create or update settings')
             ->addArgument('settings', InputArgument::REQUIRED, 'settings as JSON string')
-            ->addOption('force', "f", InputOption::VALUE_NONE, 'force writing of “readonly” settings');
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'force writing of “readonly” settings');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $settings = json_decode($input->getArgument("settings"), true);
+        $settings = json_decode($input->getArgument('settings'), true);
 
         if (!is_array($settings))
-            throw new RuntimeException("A valid JSON object must be passed for settings.");
+        {
+            throw new RuntimeException('A valid JSON object must be passed for settings.');
+        }
 
         // the values themselves are validated by the settings service
 
-        $this->getContainer()->get("agit.setting")->saveSettings($settings, $input->getOption("force"));
+        $this->getContainer()->get('agit.setting')->saveSettings($settings, $input->getOption('force'));
     }
 }

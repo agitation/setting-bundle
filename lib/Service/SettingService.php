@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /*
  * @package    agitation/setting-bundle
  * @link       http://github.com/agitation/setting-bundle
@@ -11,8 +12,6 @@ namespace Agit\SettingBundle\Service;
 
 use Agit\IntlBundle\Tool\Translate;
 use Agit\SeedBundle\Event\SeedEvent;
-use Agit\SettingBundle\Event\SettingsLoadedEvent;
-use Agit\SettingBundle\Event\SettingsModifiedEvent;
 use Agit\SettingBundle\Exception\InvalidSettingValueException;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
@@ -116,6 +115,7 @@ class SettingService
     public function getValueOf($id)
     {
         $this->load();
+
         return $this->settings[$id]->getValue();
     }
 
