@@ -14,6 +14,8 @@ use Agit\SettingBundle\Entity\Setting;
 
 abstract class AbstractSetting implements SettingInterface
 {
+    protected $readonly = false;
+
     protected $value;
 
     private $seeds = [];
@@ -65,6 +67,6 @@ abstract class AbstractSetting implements SettingInterface
      */
     public function isReadonly()
     {
-        return false;
+        return $this->readonly;
     }
 }
