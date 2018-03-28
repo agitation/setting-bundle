@@ -10,20 +10,26 @@ declare(strict_types=1);
 
 namespace Agit\SettingBundle\Event;
 
-use Agit\SettingBundle\Service\SettingService;
+use Agit\SettingBundle\Service\SettingInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class SettingsLoadedEvent extends Event
 {
-    private $settingService;
+    /**
+     * @var SettingInterface[]
+     */
+    private $settings;
 
-    public function __construct(SettingService $settingService)
+    public function __construct(array $settings)
     {
-        $this->settingService = $settingService;
+        $this->settings = $settings;
     }
 
-    public function getSettingService()
+    /**
+     * @return SettingInterface[]
+     */
+    public function getSettings() : array
     {
-        return $this->settingService;
+        return $this->settings;
     }
 }

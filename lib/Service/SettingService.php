@@ -12,6 +12,8 @@ namespace Agit\SettingBundle\Service;
 
 use Agit\IntlBundle\Tool\Translate;
 use Agit\SeedBundle\Event\SeedEvent;
+use Agit\SettingBundle\Event\SettingsLoadedEvent;
+
 use Agit\SettingBundle\Exception\InvalidSettingValueException;
 use Agit\SettingBundle\Exception\SettingNotFoundException;
 use Agit\SettingBundle\Exception\SettingReadonlyException;
@@ -96,7 +98,7 @@ class SettingService
 
         if (! isset($this->settings[$id]))
         {
-            throw new SettingNotFoundException(sprintf(Translate::t('A setting `%s` does not exist.'), $id));
+            throw new SettingNotFoundException(sprintf('A setting `%s` does not exist.', $id));
         }
 
         return $this->settings[$id];
@@ -144,7 +146,7 @@ class SettingService
         {
             if (! isset($this->settings[$id]))
             {
-                throw new SettingNotFoundException(sprintf(Translate::t('A setting `%s` does not exist.'), $id));
+                throw new SettingNotFoundException(sprintf('A setting `%s` does not exist.', $id));
             }
 
             $setting = $this->settings[$id];
@@ -223,6 +225,8 @@ class SettingService
             }
         }
 
+        $loaded = [];
+
         foreach ($this->pending as $id => $setting)
         {
             $value = isset($this->entities[$id])
@@ -230,8 +234,10 @@ class SettingService
                 : $setting->getDefaultValue();
 
             $setting->_setRealValue($value);
-            $this->settings[$id] = $setting;
+            $this->settings[$id] = $loaded[$id] = $setting;
         }
+
+        $this->eventDispatcher->dispatch('agit.settings.loaded', new SettingsLoadedEvent($loaded));
 
         $this->pending = [];
     }

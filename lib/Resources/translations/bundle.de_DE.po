@@ -3,29 +3,6 @@ msgstr ""
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: @AgitSettingBundle/Service/UserCapabilitySeed.php:20
-msgctxt "user capability"
-msgid "Load settings"
-msgstr "Einstellungen laden"
-
-#: @AgitSettingBundle/Service/UserCapabilitySeed.php:21
-msgctxt "user capability"
-msgid "Save settings"
-msgstr "Einstellungen speichern"
-
-#: @AgitSettingBundle/Service/LogentryCategorySeed.php:21
-msgctxt "logging category"
-msgid "Settings"
-msgstr "Einstellungen"
-
-#: @AgitSettingBundle/Service/SettingService.php:128
-msgid "A setting `%s` does not exist."
-msgstr "Die Einstellung `%s` existiert nicht."
-
-#: @AgitSettingBundle/Service/SettingService.php:148
+#: @AgitSettingBundle/Service/SettingService.php:175
 msgid "Invalid value for “%s”: %s"
 msgstr "Ungültiger Wert für „%s“: %s"
-
-#: @AgitSettingBundle/Service/SettingService.php:163
-msgid "The following settings have been changed: %s"
-msgstr "Die folgenden Einstellungen wurden geändert: %s"
