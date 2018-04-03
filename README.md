@@ -25,8 +25,7 @@ database structure, and allows other bundles to register their settings.
 
 ## Setting Plugins
 
-Other bundles can plug their own settings in. This is done through the
-pluggability features of the [https://www.github.com/agitation/AgitBaseBundle](AgitBaseBundle).
-
-A plugin setting simply needs to extend the `AbstractSetting` class and listen
-for the `agit.setting.register` event.
+Other bundles can plug their own settings in. This is done through adding the
+ and registering the setting during a compiler pass. A plugin setting
+simply needs to implement the `SettingInterface` class and be registered with the
+`agit.setting` tag.
