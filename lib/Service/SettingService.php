@@ -13,13 +13,10 @@ namespace Agit\SettingBundle\Service;
 use Agit\IntlBundle\Tool\Translate;
 use Agit\SeedBundle\Event\SeedEvent;
 use Agit\SettingBundle\Event\SettingsLoadedEvent;
-
-use Agit\SettingBundle\Exception\InvalidSettingValueException;
-use Agit\SettingBundle\Exception\SettingNotFoundException;
-use Agit\SettingBundle\Exception\SettingReadonlyException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SettingService
 {
@@ -98,7 +95,7 @@ class SettingService
 
         if (! isset($this->settings[$id]))
         {
-            throw new SettingNotFoundException(sprintf('A setting `%s` does not exist.', $id));
+            throw new BadRequestHttpException(sprintf('A setting `%s` does not exist.', $id));
         }
 
         return $this->settings[$id];
@@ -146,14 +143,14 @@ class SettingService
         {
             if (! isset($this->settings[$id]))
             {
-                throw new SettingNotFoundException(sprintf('A setting `%s` does not exist.', $id));
+                throw new BadRequestHttpException(sprintf('A setting `%s` does not exist.', $id));
             }
 
             $setting = $this->settings[$id];
 
             if (! $force && $setting->isReadonly())
             {
-                throw new SettingReadonlyException(sprintf('Setting `%s` is read-only.', $id));
+                throw new BadRequestHttpException(sprintf('Setting `%s` is read-only.', $id));
             }
 
             try
@@ -171,7 +168,7 @@ class SettingService
             }
             catch (Exception $e)
             {
-                throw new InvalidSettingValueException(sprintf(
+                throw new BadRequestHttpException(sprintf(
                     Translate::t('Invalid value for “%s”: %s'),
                     $setting->getName(),
                     $e->getMessage()
@@ -194,7 +191,7 @@ class SettingService
         {
             if (! isset($this->settings[$id]))
             {
-                throw new SettingNotFoundException("The setting `$id` does not exist.");
+                throw new BadRequestHttpException("The setting `$id` does not exist.");
             }
 
             $settings[$id] = $this->settings[$id];
